@@ -44,7 +44,9 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 .meta div,.amounts div{background:#faf7e8;border:1px solid #eee3c1;border-radius:10px;padding:8px;min-width:0}
 .meta span,.amounts span{display:block;font-size:11px;color:#666;margin-bottom:2px}
 .meta b,.amounts b{font-size:14px;word-break:break-word}
-.inputLine{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:end;margin-top:8px}
+.inputLine{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-top:8px}
+.unitControl{display:grid;grid-template-columns:44px minmax(70px,92px) 44px;gap:6px;align-items:center}
+.unitButton{min-width:44px;min-height:44px;padding:8px;font-size:20px;line-height:1}
 .units{text-align:right;font-size:18px;font-weight:bold}
 .amounts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .amounts b{font-size:18px}
@@ -585,6 +587,13 @@ function parseMoneyInput(id) {
   return Number(String(document.getElementById(id).value).replace(/,/g,'')) || 0;
 }
 
+function normalizeUnitValue(input) {
+  var units = Math.floor(Number(input.value) || 0);
+  if (units < 0) units = 0;
+  input.value = units;
+  return units;
+}
+
 function recalc() {
   var rate = Number(document.getElementById('bulkRate').value) || 0.9;
   var eventBudget = parseMoneyInput('eventBudget');
@@ -597,7 +606,7 @@ function recalc() {
     var inp = cards[i].querySelector('.units');
     var total = Number(inp.getAttribute('data-total')) || 0;
     var shares = Number(inp.getAttribute('data-shares')) || 1;
-    var units = Number(inp.value) || 0;
+    var units = normalizeUnitValue(inp);
     var gross = total / shares * units;
     var discounted = gross * rate;
 
@@ -636,7 +645,7 @@ function applyFilter() {
   var mode = document.getElementById('viewFilter').value;
   var cards = document.querySelectorAll('.horseCard');
   for (var i=0; i<cards.length; i++) {
-    var units = Number(cards[i].querySelector('.units').value) || 0;
+    var units = normalizeUnitValue(cards[i].querySelector('.units'));
     var shares = Number(cards[i].getAttribute('data-shares')) || 0;
     var show = true;
     if (mode === 'selected' && units < 1) show = false;
@@ -647,12 +656,48 @@ function applyFilter() {
   saveState();
 }
 
+function changeUnits(input, delta) {
+  input.value = normalizeUnitValue(input) + delta;
+  normalizeUnitValue(input);
+  applyFilter();
+}
+
+function addUnitControls(input) {
+  if (input.parentNode.classList.contains('unitControl')) return;
+  var control = document.createElement('div');
+  control.className = 'unitControl';
+
+  var decrement = document.createElement('button');
+  decrement.type = 'button';
+  decrement.className = 'unitButton';
+  decrement.textContent = '−';
+  decrement.setAttribute('aria-label', '出資口数を1減らす');
+
+  var increment = document.createElement('button');
+  increment.type = 'button';
+  increment.className = 'unitButton';
+  increment.textContent = '＋';
+  increment.setAttribute('aria-label', '出資口数を1増やす');
+
+  input.parentNode.insertBefore(control, input);
+  control.appendChild(decrement);
+  control.appendChild(input);
+  control.appendChild(increment);
+
+  decrement.onclick = function() { changeUnits(input, -1); };
+  increment.onclick = function() { changeUnits(input, 1); };
+}
+
 function wireEvents() {
   var unitInputs = document.querySelectorAll('.units');
   for (var i=0; i<unitInputs.length; i++) {
+    addUnitControls(unitInputs[i]);
+    unitInputs[i].onfocus = function() {
+      this.select();
+    };
     unitInputs[i].oninput = function() {
-      recalc();
-      saveState();
+      normalizeUnitValue(this);
+      applyFilter();
     };
   }
 
