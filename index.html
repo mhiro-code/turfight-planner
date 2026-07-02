@@ -44,8 +44,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 .meta div,.amounts div{background:#faf7e8;border:1px solid #eee3c1;border-radius:10px;padding:8px;min-width:0}
 .meta span,.amounts span{display:block;font-size:11px;color:#666;margin-bottom:2px}
 .meta b,.amounts b{font-size:14px;word-break:break-word}
-.inputLine{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:end;margin-top:8px}
+.inputLine{display:grid;grid-template-columns:1fr minmax(160px,220px);gap:8px;align-items:end;margin-top:8px}
+.quantityControls{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:center}
+.quantityButton{min-width:44px;min-height:44px;padding:8px;font-size:20px;line-height:1}
 .units{text-align:right;font-size:18px;font-weight:bold}
+.versionInfo{font-size:11px;color:#777;text-align:right;margin:8px 2px 0}
 .amounts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .amounts b{font-size:18px}
 .memoLabel{margin-top:8px}
@@ -89,6 +92,8 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
   <div class="help">金券は入力額を差し引きます。ツアー割引20,000円は出資口数が合計3口以上のときだけ適用します。出資口数・メモ・予算・上限・金券・表示条件はこの端末のブラウザに自動保存されます。</div>
 </section>
 
+<div class="versionInfo" id="versionInfo"></div>
+
 <section class="cardList" id="cardList">
 
 <article class="horseCard" data-row="horse" data-shares="1000" data-no="15">
@@ -112,7 +117,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="50000000" data-shares="1000">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="50000000" data-shares="1000">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -145,7 +154,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="50000000" data-shares="1000">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="50000000" data-shares="1000">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -178,7 +191,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="80000000" data-shares="1000">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="80000000" data-shares="1000">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -211,7 +228,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="38000000" data-shares="1000">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="38000000" data-shares="1000">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -244,7 +265,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="20000000" data-shares="400">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="20000000" data-shares="400">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -277,7 +302,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="14000000" data-shares="400">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="14000000" data-shares="400">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -310,7 +339,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="16000000" data-shares="400">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="16000000" data-shares="400">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -343,7 +376,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="12000000" data-shares="200">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="12000000" data-shares="200">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -376,7 +413,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="12000000" data-shares="200">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="12000000" data-shares="200">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -409,7 +450,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="15000000" data-shares="200">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="15000000" data-shares="200">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -442,7 +487,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="10000000" data-shares="200">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="10000000" data-shares="200">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -475,7 +524,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="12000000" data-shares="200">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="12000000" data-shares="200">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -508,7 +561,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="inputLine">
     <label>出資口数</label>
-    <input class="units" type="number" value="0" min="0" data-total="12000000" data-shares="1000">
+    <div class="quantityControls">
+      <button class="quantityButton" type="button" data-step="-1" aria-label="出資口数を1減らす">−</button>
+      <input class="units" type="number" value="0" min="0" data-total="12000000" data-shares="1000">
+      <button class="quantityButton" type="button" data-step="1" aria-label="出資口数を1増やす">＋</button>
+    </div>
   </div>
 
   <div class="amounts">
@@ -525,6 +582,8 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
 <script>
 var STORAGE_KEY = 'hitokuchiPlanner.card.v5.fixed';
+var APP_VERSION = '0.1.0';
+var APP_BUILD = '20260702';
 
 function yen(n) {
   n = Math.round(Number(n) || 0);
@@ -583,6 +642,19 @@ function loadState() {
 
 function parseMoneyInput(id) {
   return Number(String(document.getElementById(id).value).replace(/,/g,'')) || 0;
+}
+
+function selectCurrentValue() {
+  this.select();
+}
+
+function clampUnitsInput(input) {
+  var units = Number(input.value) || 0;
+  if (units < 0) input.value = 0;
+}
+
+function updateVersionInfo() {
+  document.getElementById('versionInfo').textContent = 'v' + APP_VERSION + ' / Build ' + APP_BUILD;
 }
 
 function recalc() {
@@ -650,9 +722,22 @@ function applyFilter() {
 function wireEvents() {
   var unitInputs = document.querySelectorAll('.units');
   for (var i=0; i<unitInputs.length; i++) {
+    unitInputs[i].onfocus = selectCurrentValue;
     unitInputs[i].oninput = function() {
+      clampUnitsInput(this);
       recalc();
       saveState();
+    };
+  }
+
+  var quantityButtons = document.querySelectorAll('.quantityButton');
+  for (var k=0; k<quantityButtons.length; k++) {
+    quantityButtons[k].onclick = function() {
+      var input = this.parentNode.querySelector('.units');
+      var step = Number(this.getAttribute('data-step')) || 0;
+      var nextValue = (Number(input.value) || 0) + step;
+      input.value = Math.max(0, nextValue);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
     };
   }
 
@@ -661,14 +746,17 @@ function wireEvents() {
     memoInputs[j].oninput = saveState;
   }
 
+  document.getElementById('bulkRate').onfocus = selectCurrentValue;
   document.getElementById('bulkRate').oninput = function() {
     recalc();
     saveState();
   };
+  document.getElementById('eventBudget').onfocus = selectCurrentValue;
   document.getElementById('eventBudget').oninput = function() {
     recalc();
     saveState();
   };
+  document.getElementById('voucherAmount').onfocus = selectCurrentValue;
   document.getElementById('voucherAmount').oninput = function() {
     recalc();
     saveState();
@@ -679,6 +767,7 @@ function wireEvents() {
 
 loadState();
 wireEvents();
+updateVersionInfo();
 applyFilter();
 </script>
 </body>
