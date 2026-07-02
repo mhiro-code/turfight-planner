@@ -52,6 +52,12 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 .amounts b{font-size:18px}
 .memoLabel{margin-top:8px}
 .hidden{display:none!important}
+.numericKeypad{position:absolute;z-index:30;width:188px;padding:8px;background:#fffdf7;border:1px solid #b79568;border-radius:14px;box-shadow:0 8px 24px #0003}
+.numericKeypad.hidden{display:none!important}
+.keypadGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.keypadKey{padding:10px 0;border-radius:10px;background:#7c6a25;color:white}
+.keypadDelete{background:#9a5b45}
+.keypadClose{background:#666}
 
 @media(max-width:700px){
   main{padding:8px}
@@ -524,6 +530,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
 </section>
 </main>
+<div id="numericKeypad" class="numericKeypad hidden" aria-label="数値入力テンキー"></div>
 
 <script>
 var STORAGE_KEY = 'hitokuchiPlanner.card.v5.fixed';
@@ -581,6 +588,106 @@ function loadState() {
       }
     }
   } catch(e) {}
+}
+
+
+var activeNumericInput = null;
+var numericKeypad = null;
+
+function isNumericKeypadTarget(input) {
+  return input && (input.classList.contains('units') || input.id === 'eventBudget' || input.id === 'voucherAmount');
+}
+
+function dispatchInputChange(input) {
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
+function positionNumericKeypad(input) {
+  if (!numericKeypad || !input) return;
+  var rect = input.getBoundingClientRect();
+  var top = window.scrollY + rect.bottom + 6;
+  var left = window.scrollX + rect.left;
+  var keypadWidth = numericKeypad.offsetWidth || 188;
+  var maxLeft = window.scrollX + document.documentElement.clientWidth - keypadWidth - 8;
+  numericKeypad.style.top = top + 'px';
+  numericKeypad.style.left = Math.max(8, Math.min(left, maxLeft)) + 'px';
+}
+
+function showNumericKeypad(input) {
+  if (!isNumericKeypadTarget(input)) return;
+  activeNumericInput = input;
+  numericKeypad.classList.remove('hidden');
+  positionNumericKeypad(input);
+}
+
+function hideNumericKeypad() {
+  activeNumericInput = null;
+  if (numericKeypad) numericKeypad.classList.add('hidden');
+}
+
+function appendNumericDigit(digit) {
+  if (!activeNumericInput) return;
+  activeNumericInput.value = String(activeNumericInput.value || '') + digit;
+  dispatchInputChange(activeNumericInput);
+  activeNumericInput.focus();
+}
+
+function deleteNumericDigit() {
+  if (!activeNumericInput) return;
+  activeNumericInput.value = String(activeNumericInput.value || '').slice(0, -1);
+  dispatchInputChange(activeNumericInput);
+  activeNumericInput.focus();
+}
+
+function setupNumericKeypad() {
+  numericKeypad = document.getElementById('numericKeypad');
+  var keys = ['1','2','3','4','5','6','7','8','9','削除','0','閉じる'];
+  var grid = document.createElement('div');
+  grid.className = 'keypadGrid';
+
+  for (var i=0; i<keys.length; i++) {
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'keypadKey';
+    button.textContent = keys[i];
+    if (keys[i] === '削除') {
+      button.classList.add('keypadDelete');
+      button.setAttribute('aria-label', '末尾1文字を削除');
+      button.onclick = deleteNumericDigit;
+    } else if (keys[i] === '閉じる') {
+      button.classList.add('keypadClose');
+      button.onclick = hideNumericKeypad;
+    } else {
+      button.setAttribute('data-digit', keys[i]);
+      button.onclick = function() {
+        appendNumericDigit(this.getAttribute('data-digit'));
+      };
+    }
+    grid.appendChild(button);
+  }
+
+  numericKeypad.appendChild(grid);
+
+  document.addEventListener('focusin', function(event) {
+    if (isNumericKeypadTarget(event.target)) {
+      showNumericKeypad(event.target);
+    } else {
+      hideNumericKeypad();
+    }
+  });
+
+  document.addEventListener('click', function(event) {
+    if (!numericKeypad.contains(event.target) && !isNumericKeypadTarget(event.target)) {
+      hideNumericKeypad();
+    }
+  });
+
+  window.addEventListener('resize', function() {
+    positionNumericKeypad(activeNumericInput);
+  });
+  window.addEventListener('scroll', function() {
+    positionNumericKeypad(activeNumericInput);
+  }, true);
 }
 
 function parseMoneyInput(id) {
@@ -718,6 +825,7 @@ function wireEvents() {
 }
 
 loadState();
+setupNumericKeypad();
 wireEvents();
 applyFilter();
 </script>
