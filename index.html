@@ -683,6 +683,7 @@ function wireEvents() {
       input.value = Math.max(0, nextValue);
       input.dispatchEvent(new Event('input', { bubbles: true }));
       input.focus();
+      input.select();
     };
 
     plusButton.onclick = function() {
@@ -691,6 +692,7 @@ function wireEvents() {
       input.value = Math.max(0, nextValue);
       input.dispatchEvent(new Event('input', { bubbles: true }));
       input.focus();
+      input.select();
     };
   }
 
