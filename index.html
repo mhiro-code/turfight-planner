@@ -44,7 +44,9 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 .meta div,.amounts div{background:#faf7e8;border:1px solid #eee3c1;border-radius:10px;padding:8px;min-width:0}
 .meta span,.amounts span{display:block;font-size:11px;color:#666;margin-bottom:2px}
 .meta b,.amounts b{font-size:14px;word-break:break-word}
-.inputLine{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:end;margin-top:8px}
+.inputLine{display:grid;grid-template-columns:1fr 132px;gap:8px;align-items:end;margin-top:8px}
+.unitControls{display:grid;grid-template-columns:34px 1fr 34px;gap:4px}
+.unitButton{padding:8px 0}
 .units{text-align:right;font-size:18px;font-weight:bold}
 .amounts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .amounts b{font-size:18px}
@@ -650,9 +652,45 @@ function applyFilter() {
 function wireEvents() {
   var unitInputs = document.querySelectorAll('.units');
   for (var i=0; i<unitInputs.length; i++) {
-    unitInputs[i].oninput = function() {
+    var input = unitInputs[i];
+    var controls = document.createElement('div');
+    var minusButton = document.createElement('button');
+    var plusButton = document.createElement('button');
+
+    controls.className = 'unitControls';
+    minusButton.type = 'button';
+    minusButton.className = 'unitButton';
+    minusButton.textContent = '-';
+    minusButton.setAttribute('aria-label', '出資口数を1減らす');
+    plusButton.type = 'button';
+    plusButton.className = 'unitButton';
+    plusButton.textContent = '+';
+    plusButton.setAttribute('aria-label', '出資口数を1増やす');
+
+    input.parentNode.insertBefore(controls, input);
+    controls.appendChild(minusButton);
+    controls.appendChild(input);
+    controls.appendChild(plusButton);
+
+    input.oninput = function() {
       recalc();
       saveState();
+    };
+
+    minusButton.onclick = function() {
+      var input = this.parentNode.querySelector('.units');
+      var nextValue = (Number(input.value) || 0) - 1;
+      input.value = Math.max(0, nextValue);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.focus();
+    };
+
+    plusButton.onclick = function() {
+      var input = this.parentNode.querySelector('.units');
+      var nextValue = (Number(input.value) || 0) + 1;
+      input.value = Math.max(0, nextValue);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.focus();
     };
   }
 
