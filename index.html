@@ -602,6 +602,21 @@ function dispatchInputChange(input) {
   input.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
+function shouldSuppressNativeKeyboard() {
+  var ua = navigator.userAgent || '';
+  var platform = navigator.platform || '';
+  return /iPad|iPhone|iPod/.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+function setupNativeKeyboardSuppression() {
+  if (!shouldSuppressNativeKeyboard()) return;
+  var inputs = document.querySelectorAll('.units, #eventBudget, #voucherAmount');
+  for (var i=0; i<inputs.length; i++) {
+    inputs[i].readOnly = true;
+    inputs[i].setAttribute('aria-readonly', 'true');
+  }
+}
+
 function positionNumericKeypad(input) {
   if (!numericKeypad || !input) return;
   var rect = input.getBoundingClientRect();
@@ -649,6 +664,9 @@ function setupNumericKeypad() {
     var button = document.createElement('button');
     button.type = 'button';
     button.className = 'keypadKey';
+    button.onpointerdown = function(event) {
+      event.preventDefault();
+    };
     button.textContent = keys[i];
     if (keys[i] === '削除') {
       button.classList.add('keypadDelete');
@@ -825,6 +843,7 @@ function wireEvents() {
 }
 
 loadState();
+setupNativeKeyboardSuppression();
 setupNumericKeypad();
 wireEvents();
 applyFilter();
