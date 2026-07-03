@@ -671,7 +671,7 @@ function setupNumericKeypad() {
   document.addEventListener('focusin', function(event) {
     if (isNumericKeypadTarget(event.target)) {
       showNumericKeypad(event.target);
-    } else {
+    } else if (!numericKeypad.contains(event.target)) {
       hideNumericKeypad();
     }
   });
