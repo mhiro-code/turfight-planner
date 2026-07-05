@@ -97,7 +97,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
   <div class="help">金券は入力額を差し引きます。ツアー割引20,000円は出資口数が合計3口以上のときだけ適用します。出資口数・メモ・予算・上限・金券・表示条件はこの端末のブラウザに自動保存されます。</div>
 </section>
 
-<section class="cardList" id="cardList">
+<section class="cardList" id="cardList" data-recruitment-round-id="2026-current">
 
 <article class="horseCard" data-row="horse" data-shares="1000" data-no="15">
   <div class="cardTop">
@@ -534,30 +534,68 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
 <script>
 var STORAGE_KEY = 'hitokuchiPlanner.card.v5.fixed';
+var CURRENT_RECRUITMENT_ROUND_ID = '2026-current';
+var RECRUITMENT_ROUNDS = [
+  {
+    id: CURRENT_RECRUITMENT_ROUND_ID,
+    name: '現行募集回',
+    horseSelector: '.horseCard'
+  }
+];
 
 function yen(n) {
   n = Math.round(Number(n) || 0);
   return '¥' + n.toLocaleString('ja-JP');
 }
 
+function getCurrentRecruitmentRound() {
+  return RECRUITMENT_ROUNDS[0];
+}
+
+function getRecruitmentRoundCards(round) {
+  var root = document.querySelector('[data-recruitment-round-id="' + round.id + '"]');
+  return (root || document).querySelectorAll(round.horseSelector);
+}
+
+function getHorseEntries(cards) {
+  var horses = {};
+  for (var i=0; i<cards.length; i++) {
+    var no = cards[i].getAttribute('data-no');
+    horses[no] = {
+      units: cards[i].querySelector('.units').value,
+      memo: cards[i].querySelector('.memo').value
+    };
+  }
+  return horses;
+}
+
+function getSavedHorsesForRound(data, roundId) {
+  if (data.recruitmentRounds && data.recruitmentRounds[roundId] && data.recruitmentRounds[roundId].horses) {
+    return data.recruitmentRounds[roundId].horses;
+  }
+  return data.horses || {};
+}
+
 function getSaveData() {
+  var round = getCurrentRecruitmentRound();
+  var cards = getRecruitmentRoundCards(round);
+  var horses = getHorseEntries(cards);
   var data = {
+    schemaVersion: 2,
+    activeRecruitmentRoundId: round.id,
     
     eventBudget: document.getElementById('eventBudget').value,
     bulkRate: document.getElementById('bulkRate').value,
     voucherAmount: document.getElementById('voucherAmount').value,
     viewFilter: document.getElementById('viewFilter').value,
-    horses: {}
+    recruitmentRounds: {}
   };
-
-  var cards = document.querySelectorAll('.horseCard');
-  for (var i=0; i<cards.length; i++) {
-    var no = cards[i].getAttribute('data-no');
-    data.horses[no] = {
-      units: cards[i].querySelector('.units').value,
-      memo: cards[i].querySelector('.memo').value
-    };
-  }
+  data.recruitmentRounds[round.id] = {
+    id: round.id,
+    name: round.name,
+    horses: horses
+  };
+  data.horses = horses;
   return data;
 }
 
@@ -579,12 +617,14 @@ function loadState() {
     if (data.voucherAmount != null) document.getElementById('voucherAmount').value = data.voucherAmount;
     if (data.viewFilter != null) document.getElementById('viewFilter').value = data.viewFilter;
 
-    var cards = document.querySelectorAll('.horseCard');
+    var round = getCurrentRecruitmentRound();
+    var savedHorses = getSavedHorsesForRound(data, round.id);
+    var cards = getRecruitmentRoundCards(round);
     for (var i=0; i<cards.length; i++) {
       var no = cards[i].getAttribute('data-no');
-      if (data.horses && data.horses[no]) {
-        if (data.horses[no].units != null) cards[i].querySelector('.units').value = data.horses[no].units;
-        if (data.horses[no].memo != null) cards[i].querySelector('.memo').value = data.horses[no].memo;
+      if (savedHorses && savedHorses[no]) {
+        if (savedHorses[no].units != null) cards[i].querySelector('.units').value = savedHorses[no].units;
+        if (savedHorses[no].memo != null) cards[i].querySelector('.memo').value = savedHorses[no].memo;
       }
     }
   } catch(e) {}
@@ -736,7 +776,7 @@ function recalc() {
   var voucher = Math.abs(parseMoneyInput('voucherAmount'));
   var subtotal = 0;
   var unitTotal = 0;
-  var cards = document.querySelectorAll('.horseCard');
+  var cards = getRecruitmentRoundCards(getCurrentRecruitmentRound());
 
   for (var i=0; i<cards.length; i++) {
     var inp = cards[i].querySelector('.units');
@@ -779,7 +819,7 @@ function recalc() {
 
 function applyFilter() {
   var mode = document.getElementById('viewFilter').value;
-  var cards = document.querySelectorAll('.horseCard');
+  var cards = getRecruitmentRoundCards(getCurrentRecruitmentRound());
   for (var i=0; i<cards.length; i++) {
     var units = Number(cards[i].querySelector('.units').value) || 0;
     var shares = Number(cards[i].getAttribute('data-shares')) || 0;
