@@ -79,13 +79,13 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 <section class="card grid">
   <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
-  <div><label>一括払い</label><select id="bulkRate"><option value="0.9">10%割引</option><option value="1.0">割引なし</option></select></div>
+  <div><label>支払方法</label><select id="bulkRate"><option value="0.9">一括払い（10%）</option><option value="0.95">分割払い（5%）</option></select></div>
   <div><label>表示</label><select id="viewFilter"><option value="all">全頭</option><option value="selected">出資口数1以上</option><option value="no200">200口を除外</option></select></div>
 </section>
 
 <section class="card summary">
   <div class="kpi"><div class="name">選択口数</div><div id="selectedCount" class="value">0口</div></div>
-  <div class="kpi"><div class="name">一括割引後合計</div><div id="subtotal" class="value">¥0</div></div>
+  <div class="kpi"><div class="name">支払方法割引後合計</div><div id="subtotal" class="value">¥0</div></div>
   <div class="kpi"><div class="name">金券</div><div id="voucherDisplay" class="value">¥0</div></div>
   <div class="kpi"><div class="name">ツアー割引</div><div id="tourDiscount" class="value">¥0</div></div>
   <div class="kpi"><div class="name">支払総額</div><div id="payment" class="value">¥0</div></div>
@@ -125,7 +125,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥0</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -158,7 +158,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥50,000</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥45,000</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥45,000</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -191,7 +191,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥160,000</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥144,000</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥144,000</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -224,7 +224,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥38,000</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥34,200</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥34,200</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -257,7 +257,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥0</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -290,7 +290,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥0</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -323,7 +323,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥0</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -356,7 +356,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥0</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -389,7 +389,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥0</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -422,7 +422,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥0</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -455,7 +455,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥0</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -488,7 +488,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥0</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -521,7 +521,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
   <div class="amounts">
     <div><span>出資金額</span><b class="gross">¥0</b></div>
-    <div><span>一括割引後</span><b class="discounted">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
   </div>
 
   <label class="memoLabel">メモ</label>
@@ -712,8 +712,16 @@ function parseMoneyInput(id) {
   return Number(String(document.getElementById(id).value).replace(/,/g,'')) || 0;
 }
 
+function getPaymentRate() {
+  var bulkRate = document.getElementById('bulkRate');
+  var rate = Number(bulkRate.value);
+  if (rate === 0.9 || rate === 0.95) return rate;
+  bulkRate.value = '0.9';
+  return 0.9;
+}
+
 function recalc() {
-  var rate = Number(document.getElementById('bulkRate').value) || 0.9;
+  var rate = getPaymentRate();
   var eventBudget = parseMoneyInput('eventBudget');
   var voucher = Math.abs(parseMoneyInput('voucherAmount'));
   var subtotal = 0;
@@ -826,7 +834,7 @@ function wireEvents() {
     memoInputs[j].oninput = saveState;
   }
 
-  document.getElementById('bulkRate').oninput = function() {
+  document.getElementById('bulkRate').onchange = function() {
     recalc();
     saveState();
   };
