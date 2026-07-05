@@ -593,6 +593,7 @@ function loadState() {
 
 var activeNumericInput = null;
 var numericKeypad = null;
+var isNumericInputValueSelected = false;
 
 function isNumericKeypadTarget(input) {
   return input && (input.classList.contains('units') || input.id === 'eventBudget' || input.id === 'voucherAmount');
@@ -631,24 +632,33 @@ function positionNumericKeypad(input) {
 function showNumericKeypad(input) {
   if (!isNumericKeypadTarget(input)) return;
   activeNumericInput = input;
+  isNumericInputValueSelected = true;
+  input.select();
   numericKeypad.classList.remove('hidden');
   positionNumericKeypad(input);
 }
 
 function hideNumericKeypad() {
   activeNumericInput = null;
+  isNumericInputValueSelected = false;
   if (numericKeypad) numericKeypad.classList.add('hidden');
 }
 
 function appendNumericDigit(digit) {
   if (!activeNumericInput) return;
-  activeNumericInput.value = String(activeNumericInput.value || '') + digit;
+  if (isNumericInputValueSelected) {
+    activeNumericInput.value = digit;
+    isNumericInputValueSelected = false;
+  } else {
+    activeNumericInput.value = String(activeNumericInput.value || '') + digit;
+  }
   dispatchInputChange(activeNumericInput);
   activeNumericInput.focus();
 }
 
 function deleteNumericDigit() {
   if (!activeNumericInput) return;
+  isNumericInputValueSelected = false;
   activeNumericInput.value = String(activeNumericInput.value || '').slice(0, -1);
   dispatchInputChange(activeNumericInput);
   activeNumericInput.focus();
