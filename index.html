@@ -17,7 +17,16 @@ h1{font-size:20px;margin:0}
 main{padding:12px;max-width:920px;margin:auto}
 .card{background:#fffdf7;border:1px solid #ddd5b8;border-radius:14px;padding:12px;margin-bottom:12px}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.planBar{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:end}
+.planTabsBar{position:sticky;top:52px;z-index:9;background:#f7f4e8;border-bottom:1px solid #ddd5b8;margin:-12px -12px 12px;padding:8px 12px 0;overflow-x:auto}
+.planTabs{display:flex;align-items:flex-end;gap:2px;min-width:max-content}
+.planTab{max-width:180px;padding:8px 14px;border:1px solid #d6c89d;border-bottom-color:#b79568;border-radius:10px 10px 0 0;background:#eee7cf;color:#4a3b17;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:inset 0 -2px 0 #d6c89d}
+.planTab.active{background:#fffdf7;color:#222;border-color:#b79568;border-bottom-color:#fffdf7;box-shadow:0 -1px 6px #0001}
+.planTabAdd{min-width:44px;padding:8px 14px;border-radius:10px 10px 0 0;background:#7c6a25;color:white}
+.planContextMenu{position:fixed;z-index:40;min-width:144px;padding:6px;background:#fffdf7;border:1px solid #b79568;border-radius:10px;box-shadow:0 8px 24px #0003}
+.planContextMenu.hidden{display:none!important}
+.planContextMenu button{display:block;width:100%;margin:0;padding:8px 10px;border-radius:7px;background:transparent;color:#222;text-align:left;font-weight:normal}
+.planContextMenu button:hover{background:#eee7cf}
+.planContextMenu button:disabled{color:#aaa;background:transparent}
 label{display:block;font-size:12px;color:#666;margin-bottom:4px}
 input,select,button{font:inherit;padding:8px;border:1px solid #ddd5b8;border-radius:9px;background:white}
 input,select{width:100%;box-sizing:border-box}
@@ -77,18 +86,19 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 <body>
 <header><h1>Turfight Planner</h1></header>
 <main>
+<nav class="planTabsBar" aria-label="検討プラン">
+  <div id="planTabs" class="planTabs"></div>
+</nav>
+<div id="planContextMenu" class="planContextMenu hidden" role="menu">
+  <button type="button" id="contextRenamePlan" role="menuitem">名前変更</button>
+  <button type="button" id="contextDeletePlan" role="menuitem">削除</button>
+</div>
+
 <section class="card grid">
   <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>支払方法</label><select id="bulkRate"><option value="0.9">一括払い（10%）</option><option value="0.95">分割払い（5%）</option></select></div>
   <div><label>表示</label><select id="viewFilter"><option value="all">全頭</option><option value="selected">出資口数1以上</option><option value="no200">200口を除外</option></select></div>
-</section>
-
-<section class="card planBar">
-  <div><label>検討プラン</label><select id="planSelect"></select></div>
-  <button type="button" id="addPlanButton">追加</button>
-  <button type="button" id="renamePlanButton">名前変更</button>
-  <button type="button" id="deletePlanButton">削除</button>
 </section>
 
 <section class="card summary">
@@ -603,8 +613,12 @@ function getSavedHorsesForRound(data, roundId) {
 }
 
 function getPlanName() {
-  var select = document.getElementById('planSelect');
-  return (select && select.selectedOptions[0] && select.selectedOptions[0].textContent) || 'プラン1';
+  var data = readStoredData();
+  var plans = getPlans(data);
+  for (var i=0; i<plans.length; i++) {
+    if (plans[i].id === activePlanId) return plans[i].name || ('プラン' + (i + 1));
+  }
+  return 'プラン1';
 }
 
 function getPlanData() {
@@ -690,18 +704,55 @@ function saveState() {
   } catch(e) {}
 }
 
-function renderPlanSelect(plans) {
-  var select = document.getElementById('planSelect');
-  if (!select) return;
-  select.innerHTML = '';
+function renderPlanTabs(plans) {
+  var tabs = document.getElementById('planTabs');
+  if (!tabs) return;
+  tabs.innerHTML = '';
   for (var i=0; i<plans.length; i++) {
-    var option = document.createElement('option');
-    option.value = plans[i].id;
-    option.textContent = plans[i].name || ('プラン' + (i + 1));
-    select.appendChild(option);
+    var tab = document.createElement('button');
+    tab.type = 'button';
+    tab.className = 'planTab' + (plans[i].id === activePlanId ? ' active' : '');
+    tab.textContent = plans[i].name || ('プラン' + (i + 1));
+    tab.title = tab.textContent;
+    tab.setAttribute('aria-pressed', plans[i].id === activePlanId ? 'true' : 'false');
+    tab.setAttribute('data-plan-id', plans[i].id);
+    tab.onclick = function() { switchPlan(this.getAttribute('data-plan-id')); };
+    tab.ondblclick = function() { renamePlan(this.getAttribute('data-plan-id')); };
+    tab.oncontextmenu = function(event) {
+      event.preventDefault();
+      showPlanContextMenu(event.clientX, event.clientY, this.getAttribute('data-plan-id'));
+    };
+    tabs.appendChild(tab);
   }
-  select.value = activePlanId;
+  var addTab = document.createElement('button');
+  addTab.type = 'button';
+  addTab.className = 'planTabAdd';
+  addTab.textContent = '＋';
+  addTab.title = '新規プラン作成';
+  addTab.setAttribute('aria-label', '新規プラン作成');
+  addTab.onclick = addPlan;
+  tabs.appendChild(addTab);
 }
+
+function hidePlanContextMenu() {
+  var menu = document.getElementById('planContextMenu');
+  if (!menu) return;
+  menu.classList.add('hidden');
+  menu.removeAttribute('data-plan-id');
+}
+
+function showPlanContextMenu(x, y, planId) {
+  var menu = document.getElementById('planContextMenu');
+  if (!menu) return;
+  menu.setAttribute('data-plan-id', planId);
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+  menu.classList.remove('hidden');
+  var plans = getPlans(readStoredData());
+  var deleteButton = document.getElementById('contextDeletePlan');
+  if (deleteButton) deleteButton.disabled = plans.length <= 1;
+}
+
 
 function applyPlan(plan) {
   if (plan.eventBudget != null) document.getElementById('eventBudget').value = plan.eventBudget;
@@ -730,7 +781,7 @@ function loadState() {
     if (plans[i].id === activePlanId) activePlan = plans[i];
   }
   activePlanId = activePlan.id;
-  renderPlanSelect(plans);
+  renderPlanTabs(plans);
   applyPlan(activePlan);
 }
 
@@ -741,7 +792,7 @@ function switchPlan(planId) {
   for (var i=0; i<plans.length; i++) {
     if (plans[i].id === planId) {
       activePlanId = planId;
-      renderPlanSelect(plans);
+      renderPlanTabs(plans);
       applyPlan(plans[i]);
       applyFilter();
       return;
@@ -760,34 +811,45 @@ function addPlan() {
   plans.push(newPlan);
   activePlanId = newId;
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, plans: plans }));
-  renderPlanSelect(plans);
+  renderPlanTabs(plans);
   applyPlan(newPlan);
   applyFilter();
 }
 
-function renamePlan() {
+function renamePlan(planId) {
+  saveState();
   var data = readStoredData();
   var plans = getPlans(data);
-  var currentName = getPlanName();
+  var targetPlanId = planId || activePlanId;
+  var currentName = 'プラン1';
+  for (var i=0; i<plans.length; i++) {
+    if (plans[i].id === targetPlanId) currentName = plans[i].name || ('プラン' + (i + 1));
+  }
   var name = prompt('プラン名', currentName);
   if (!name) return;
   for (var i=0; i<plans.length; i++) {
-    if (plans[i].id === activePlanId) plans[i].name = name;
+    if (plans[i].id === targetPlanId) plans[i].name = name;
   }
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, plans: plans }));
-  renderPlanSelect(plans);
+  renderPlanTabs(plans);
 }
 
-function deletePlan() {
+function deletePlan(planId) {
+  saveState();
   var data = readStoredData();
   var plans = getPlans(data);
+  var targetPlanId = planId || activePlanId;
   if (plans.length <= 1) return;
-  if (!confirm('現在のプランを削除しますか？')) return;
-  plans = plans.filter(function(plan) { return plan.id !== activePlanId; });
-  activePlanId = plans[0].id;
+  if (!confirm('選択したプランを削除しますか？')) return;
+  plans = plans.filter(function(plan) { return plan.id !== targetPlanId; });
+  if (activePlanId === targetPlanId) activePlanId = plans[0].id;
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, plans: plans }));
-  renderPlanSelect(plans);
-  applyPlan(plans[0]);
+  renderPlanTabs(plans);
+  var activePlan = plans[0];
+  for (var i=0; i<plans.length; i++) {
+    if (plans[i].id === activePlanId) activePlan = plans[i];
+  }
+  applyPlan(activePlan);
   applyFilter();
 }
 
@@ -1059,10 +1121,23 @@ function wireEvents() {
   };
 
   document.getElementById('viewFilter').onchange = applyFilter;
-  document.getElementById('planSelect').onchange = function() { switchPlan(this.value); };
-  document.getElementById('addPlanButton').onclick = addPlan;
-  document.getElementById('renamePlanButton').onclick = renamePlan;
-  document.getElementById('deletePlanButton').onclick = deletePlan;
+  document.getElementById('contextRenamePlan').onclick = function() {
+    var planId = document.getElementById('planContextMenu').getAttribute('data-plan-id');
+    hidePlanContextMenu();
+    renamePlan(planId);
+  };
+  document.getElementById('contextDeletePlan').onclick = function() {
+    var planId = document.getElementById('planContextMenu').getAttribute('data-plan-id');
+    hidePlanContextMenu();
+    deletePlan(planId);
+  };
+  document.addEventListener('click', function(event) {
+    var menu = document.getElementById('planContextMenu');
+    if (menu && !menu.classList.contains('hidden') && !menu.contains(event.target)) hidePlanContextMenu();
+  });
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') hidePlanContextMenu();
+  });
 }
 
 loadState();
