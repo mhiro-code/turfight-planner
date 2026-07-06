@@ -593,12 +593,24 @@ function getRecruitmentRoundCards(round) {
   return (round.root || document).querySelectorAll(round.horseSelector);
 }
 
+function normalizeUnitValue(value) {
+  var units = Math.floor(Number(value) || 0);
+  return Math.max(0, units);
+}
+
+function getNormalizedUnitInputValue(input) {
+  var units = normalizeUnitValue(input.value);
+  if (String(input.value) !== String(units)) input.value = units;
+  return units;
+}
+
 function getHorseEntries(cards) {
   var horses = {};
   for (var i=0; i<cards.length; i++) {
     var no = cards[i].getAttribute('data-no');
+    var unitsInput = cards[i].querySelector('.units');
     horses[no] = {
-      units: cards[i].querySelector('.units').value,
+      units: getNormalizedUnitInputValue(unitsInput),
       memo: cards[i].querySelector('.memo').value
     };
   }
@@ -1005,7 +1017,7 @@ function recalc() {
     var inp = cards[i].querySelector('.units');
     var total = Number(inp.getAttribute('data-total')) || 0;
     var shares = Number(inp.getAttribute('data-shares')) || 1;
-    var units = Number(inp.value) || 0;
+    var units = getNormalizedUnitInputValue(inp);
     var gross = total / shares * units;
     var discounted = gross * rate;
 
@@ -1044,7 +1056,7 @@ function applyFilter() {
   var mode = document.getElementById('viewFilter').value;
   var cards = getRecruitmentRoundCards(getCurrentRecruitmentRound());
   for (var i=0; i<cards.length; i++) {
-    var units = Number(cards[i].querySelector('.units').value) || 0;
+    var units = getNormalizedUnitInputValue(cards[i].querySelector('.units'));
     var shares = Number(cards[i].getAttribute('data-shares')) || 0;
     var show = true;
     if (mode === 'selected' && units < 1) show = false;
