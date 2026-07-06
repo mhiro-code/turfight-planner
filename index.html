@@ -34,7 +34,7 @@ button{background:#7c6a25;color:white;border:0;font-weight:bold}
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .kpi{background:white;border:1px solid #ddd5b8;border-radius:12px;padding:10px}
 .kpi .name{font-size:12px;color:#666}
-.kpi .value{font-size:20px;font-weight:bold}
+.kpi .value{font-size:20px;font-weight:bold;text-align:right}
 .kpi.bad .value{color:#b42318}
 .kpi.ok .value{color:#0f7b43}
 .help{font-size:12px;color:#666;margin-top:8px}
@@ -58,6 +58,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 .unitControls{display:grid;grid-template-columns:34px 1fr 34px;gap:4px}
 .unitButton{padding:8px 0}
 .units{text-align:right;font-size:18px;font-weight:bold}
+#eventBudget,#voucherAmount{text-align:right}
 .amounts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .amounts b{font-size:18px}
 .memoLabel{margin-top:8px}
@@ -604,6 +605,44 @@ function getNormalizedUnitInputValue(input) {
   return units;
 }
 
+function normalizeMoneyValue(value) {
+  var amount = Math.floor(Number(String(value).replace(/,/g,'')) || 0);
+  return Math.max(0, amount);
+}
+
+function getNormalizedMoneyInputValue(id) {
+  var input = document.getElementById(id);
+  var amount = normalizeMoneyValue(input.value);
+  var rawValue = String(input.value).replace(/,/g,'');
+  if (rawValue !== String(amount)) input.value = amount;
+  return amount;
+}
+
+function unformatMoneyInputValue(id) {
+  var input = document.getElementById(id);
+  input.value = String(input.value).replace(/,/g,'');
+}
+
+function formatMoneyInputValue(id) {
+  var input = document.getElementById(id);
+  var amount = getNormalizedMoneyInputValue(id);
+  input.value = amount.toLocaleString('ja-JP');
+}
+
+function wireMoneyInput(id) {
+  var input = document.getElementById(id);
+  input.onfocus = function() {
+    unformatMoneyInputValue(id);
+  };
+  input.onblur = function() {
+    formatMoneyInputValue(id);
+  };
+  input.oninput = function() {
+    recalc();
+    saveState();
+  };
+}
+
 function getHorseEntries(cards) {
   var horses = {};
   for (var i=0; i<cards.length; i++) {
@@ -640,9 +679,9 @@ function getPlanData() {
   var plan = {
     id: activePlanId,
     name: getPlanName(),
-    eventBudget: document.getElementById('eventBudget').value,
+    eventBudget: getNormalizedMoneyInputValue('eventBudget'),
     bulkRate: document.getElementById('bulkRate').value,
-    voucherAmount: document.getElementById('voucherAmount').value,
+    voucherAmount: getNormalizedMoneyInputValue('voucherAmount'),
     viewFilter: document.getElementById('viewFilter').value,
     activeRecruitmentRoundId: round.id,
     recruitmentRounds: {}
@@ -994,7 +1033,7 @@ function setupNumericKeypad() {
 }
 
 function parseMoneyInput(id) {
-  return Number(String(document.getElementById(id).value).replace(/,/g,'')) || 0;
+  return getNormalizedMoneyInputValue(id);
 }
 
 function getPaymentRate() {
@@ -1008,7 +1047,7 @@ function getPaymentRate() {
 function recalc() {
   var rate = getPaymentRate();
   var eventBudget = parseMoneyInput('eventBudget');
-  var voucher = Math.abs(parseMoneyInput('voucherAmount'));
+  var voucher = parseMoneyInput('voucherAmount');
   var subtotal = 0;
   var unitTotal = 0;
   var cards = getRecruitmentRoundCards(getCurrentRecruitmentRound());
@@ -1123,14 +1162,8 @@ function wireEvents() {
     recalc();
     saveState();
   };
-  document.getElementById('eventBudget').oninput = function() {
-    recalc();
-    saveState();
-  };
-  document.getElementById('voucherAmount').oninput = function() {
-    recalc();
-    saveState();
-  };
+  wireMoneyInput('eventBudget');
+  wireMoneyInput('voucherAmount');
 
   document.getElementById('viewFilter').onchange = applyFilter;
   document.getElementById('contextRenamePlan').onclick = function() {
