@@ -684,10 +684,6 @@ function getPlanData() {
   var plan = {
     id: activePlanId,
     name: getPlanName(),
-    eventBudget: getNormalizedMoneyInputValue('eventBudget'),
-    bulkRate: document.getElementById('bulkRate').value,
-    voucherAmount: getNormalizedMoneyInputValue('voucherAmount'),
-    viewFilter: document.getElementById('viewFilter').value,
     activeRecruitmentRoundId: round.id,
     recruitmentRounds: {}
   };
@@ -699,9 +695,53 @@ function getPlanData() {
   return plan;
 }
 
+
+function getRecruitmentRoundSettings(data, plan) {
+  var round = getCurrentRecruitmentRound();
+  var settings = data.recruitmentRoundSettings && data.recruitmentRoundSettings[round.id];
+  if (settings) return settings;
+  return {
+    id: round.id,
+    name: round.name,
+    eventBudget: plan && plan.eventBudget != null ? plan.eventBudget : (data.eventBudget || ''),
+    bulkRate: plan && plan.bulkRate != null ? plan.bulkRate : (data.bulkRate || '0.9'),
+    voucherAmount: plan && plan.voucherAmount != null ? plan.voucherAmount : (data.voucherAmount || ''),
+    viewFilter: plan && plan.viewFilter != null ? plan.viewFilter : (data.viewFilter || 'all')
+  };
+}
+
+function getRecruitmentRoundSettingsData(existing) {
+  var round = getCurrentRecruitmentRound();
+  var settings = existing.recruitmentRoundSettings || {};
+  settings[round.id] = {
+    id: round.id,
+    name: round.name,
+    eventBudget: getNormalizedMoneyInputValue('eventBudget'),
+    bulkRate: document.getElementById('bulkRate').value,
+    voucherAmount: getNormalizedMoneyInputValue('voucherAmount'),
+    viewFilter: document.getElementById('viewFilter').value
+  };
+  return settings;
+}
+
+function stripPlanHeaderFields(plan) {
+  delete plan.eventBudget;
+  delete plan.bulkRate;
+  delete plan.voucherAmount;
+  delete plan.viewFilter;
+  return plan;
+}
+
+function stripPlansHeaderFields(plans) {
+  for (var i=0; i<plans.length; i++) {
+    plans[i] = stripPlanHeaderFields(plans[i]);
+  }
+  return plans;
+}
+
 function getSaveData() {
   var existing = readStoredData();
-  var plans = existing.plans || [createPlanFromLegacyData(existing)];
+  var plans = stripPlansHeaderFields(existing.plans || [createPlanFromLegacyData(existing)]);
   var currentPlan = getPlanData();
   var replaced = false;
   for (var i=0; i<plans.length; i++) {
@@ -714,9 +754,11 @@ function getSaveData() {
   return {
     schemaVersion: 3,
     activePlanId: activePlanId,
+    recruitmentRoundSettings: getRecruitmentRoundSettingsData(existing),
     plans: plans
   };
 }
+
 
 function readStoredData() {
   try {
@@ -732,10 +774,6 @@ function createPlanFromLegacyData(data) {
   var plan = {
     id: DEFAULT_PLAN_ID,
     name: 'プラン1',
-    eventBudget: data.eventBudget || '',
-    bulkRate: data.bulkRate || '0.9',
-    voucherAmount: data.voucherAmount || '',
-    viewFilter: data.viewFilter || 'all',
     activeRecruitmentRoundId: data.activeRecruitmentRoundId || round.id,
     recruitmentRounds: data.recruitmentRounds || {}
   };
@@ -748,6 +786,7 @@ function createPlanFromLegacyData(data) {
   }
   return plan;
 }
+
 
 function getPlans(data) {
   if (data.plans && data.plans.length) return data.plans;
@@ -826,14 +865,17 @@ function showPlanContextMenu(x, y, planId) {
 }
 
 
-function applyPlan(plan) {
-  if (plan.eventBudget != null) document.getElementById('eventBudget').value = plan.eventBudget;
-  if (plan.bulkRate != null) document.getElementById('bulkRate').value = plan.bulkRate;
-  if (plan.voucherAmount != null) document.getElementById('voucherAmount').value = plan.voucherAmount;
-  if (plan.viewFilter != null) document.getElementById('viewFilter').value = plan.viewFilter;
+function applyRecruitmentRoundSettings(data, plan) {
+  var settings = getRecruitmentRoundSettings(data || {}, plan);
+  document.getElementById('eventBudget').value = settings.eventBudget || '';
+  document.getElementById('bulkRate').value = settings.bulkRate || '0.9';
+  document.getElementById('voucherAmount').value = settings.voucherAmount || '';
+  document.getElementById('viewFilter').value = settings.viewFilter || 'all';
   formatMoneyInputValue('eventBudget');
   formatMoneyInputValue('voucherAmount');
+}
 
+function applyPlan(plan) {
   var round = getCurrentRecruitmentRound();
   var savedHorses = getSavedHorsesForRound(plan, round.id);
   var cards = getRecruitmentRoundCards(round);
@@ -846,6 +888,7 @@ function applyPlan(plan) {
   }
 }
 
+
 function loadState() {
   var data = readStoredData();
   var plans = getPlans(data);
@@ -855,6 +898,7 @@ function loadState() {
     if (plans[i].id === activePlanId) activePlan = plans[i];
   }
   activePlanId = activePlan.id;
+  applyRecruitmentRoundSettings(data, activePlan);
   renderPlanTabs(plans);
   applyPlan(activePlan);
 }
@@ -884,7 +928,7 @@ function addPlan() {
   newPlan.name = 'プラン' + (plans.length + 1);
   plans.push(newPlan);
   activePlanId = newId;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, plans: plans }));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, recruitmentRoundSettings: getRecruitmentRoundSettingsData(data), plans: stripPlansHeaderFields(plans) }));
   renderPlanTabs(plans);
   applyPlan(newPlan);
   applyFilter();
@@ -904,7 +948,7 @@ function renamePlan(planId) {
   for (var i=0; i<plans.length; i++) {
     if (plans[i].id === targetPlanId) plans[i].name = name;
   }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, plans: plans }));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, recruitmentRoundSettings: getRecruitmentRoundSettingsData(data), plans: stripPlansHeaderFields(plans) }));
   renderPlanTabs(plans);
 }
 
@@ -917,7 +961,7 @@ function deletePlan(planId) {
   if (!confirm('選択したプランを削除しますか？')) return;
   plans = plans.filter(function(plan) { return plan.id !== targetPlanId; });
   if (activePlanId === targetPlanId) activePlanId = plans[0].id;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, plans: plans }));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, recruitmentRoundSettings: getRecruitmentRoundSettingsData(data), plans: stripPlansHeaderFields(plans) }));
   renderPlanTabs(plans);
   var activePlan = plans[0];
   for (var i=0; i<plans.length; i++) {
