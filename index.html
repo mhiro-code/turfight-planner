@@ -19,8 +19,11 @@ main{padding:12px;max-width:920px;margin:auto}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .planTabsBar{position:sticky;top:52px;z-index:9;background:#f7f4e8;border-bottom:1px solid #ddd5b8;margin:-12px -12px 12px;padding:8px 12px 0;overflow-x:auto}
 .planTabs{display:flex;align-items:flex-end;gap:2px;min-width:max-content}
-.planTab{max-width:180px;padding:8px 14px;border:1px solid #d6c89d;border-bottom-color:#b79568;border-radius:10px 10px 0 0;background:#eee7cf;color:#4a3b17;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:inset 0 -2px 0 #d6c89d}
+.planTabWrap{position:relative;display:inline-flex;align-items:flex-end}
+.planTab{max-width:180px;padding:8px 32px 8px 14px;border:1px solid #d6c89d;border-bottom-color:#b79568;border-radius:10px 10px 0 0;background:#eee7cf;color:#4a3b17;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:inset 0 -2px 0 #d6c89d}
 .planTab.active{background:#fffdf7;color:#222;border-color:#b79568;border-bottom-color:#fffdf7;box-shadow:0 -1px 6px #0001}
+.planTabMenuButton{position:absolute;right:4px;top:4px;width:24px;height:24px;padding:0;border-radius:7px;background:transparent;color:#4a3b17;font-weight:bold;line-height:1}
+.planTabMenuButton:hover{background:#d6c89d}
 .planTabAdd{min-width:44px;padding:8px 14px;border-radius:10px 10px 0 0;background:#7c6a25;color:white}
 .planContextMenu{position:fixed;z-index:40;min-width:144px;padding:6px;background:#fffdf7;border:1px solid #b79568;border-radius:10px;box-shadow:0 8px 24px #0003}
 .planContextMenu.hidden{display:none!important}
@@ -774,7 +777,23 @@ function renderPlanTabs(plans) {
       event.preventDefault();
       showPlanContextMenu(event.clientX, event.clientY, this.getAttribute('data-plan-id'));
     };
-    tabs.appendChild(tab);
+    var tabWrap = document.createElement('span');
+    var menuButton = document.createElement('button');
+    tabWrap.className = 'planTabWrap';
+    menuButton.type = 'button';
+    menuButton.className = 'planTabMenuButton';
+    menuButton.textContent = '...';
+    menuButton.title = 'menu';
+    menuButton.setAttribute('aria-label', 'menu');
+    menuButton.setAttribute('data-plan-id', plans[i].id);
+    menuButton.onclick = function(event) {
+      event.stopPropagation();
+      var rect = this.getBoundingClientRect();
+      showPlanContextMenu(rect.left, rect.bottom + 4, this.getAttribute('data-plan-id'));
+    };
+    tabWrap.appendChild(tab);
+    tabWrap.appendChild(menuButton);
+    tabs.appendChild(tabWrap);
   }
   var addTab = document.createElement('button');
   addTab.type = 'button';
