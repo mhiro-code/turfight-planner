@@ -830,6 +830,8 @@ function applyPlan(plan) {
   if (plan.bulkRate != null) document.getElementById('bulkRate').value = plan.bulkRate;
   if (plan.voucherAmount != null) document.getElementById('voucherAmount').value = plan.voucherAmount;
   if (plan.viewFilter != null) document.getElementById('viewFilter').value = plan.viewFilter;
+  formatMoneyInputValue('eventBudget');
+  formatMoneyInputValue('voucherAmount');
 
   var round = getCurrentRecruitmentRound();
   var savedHorses = getSavedHorsesForRound(plan, round.id);
