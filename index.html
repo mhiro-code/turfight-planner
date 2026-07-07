@@ -90,6 +90,13 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 <body>
 <header><h1>Turfight Planner</h1></header>
 <main>
+<section class="card grid">
+  <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
+  <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
+  <div><label>支払方法</label><select id="bulkRate"><option value="0.9">一括払い（10%）</option><option value="0.95">分割払い（5%）</option></select></div>
+  <div><label>表示</label><select id="viewFilter"><option value="all">全頭</option><option value="selected">出資口数1以上</option><option value="no200">200口を除外</option></select></div>
+</section>
+
 <nav class="planTabsBar" aria-label="検討プラン">
   <div id="planTabs" class="planTabs"></div>
 </nav>
@@ -98,12 +105,6 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
   <button type="button" id="contextDeletePlan" role="menuitem">削除</button>
 </div>
 
-<section class="card grid">
-  <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
-  <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
-  <div><label>支払方法</label><select id="bulkRate"><option value="0.9">一括払い（10%）</option><option value="0.95">分割払い（5%）</option></select></div>
-  <div><label>表示</label><select id="viewFilter"><option value="all">全頭</option><option value="selected">出資口数1以上</option><option value="no200">200口を除外</option></select></div>
-</section>
 
 <section class="card summary">
   <div class="kpi"><div class="name">選択口数</div><div id="selectedCount" class="value">0口</div></div>
