@@ -17,7 +17,8 @@ h1{font-size:20px;margin:0}
 main{padding:12px;max-width:920px;margin:auto}
 .card{background:#fffdf7;border:1px solid #ddd5b8;border-radius:14px;padding:12px;margin-bottom:12px}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.planTabsBar{position:sticky;top:52px;z-index:9;background:#f7f4e8;border-bottom:1px solid #ddd5b8;margin:-12px -12px 12px;padding:8px 12px 0;display:flex;align-items:flex-end;gap:12px}
+.recruitmentHeader{position:sticky;top:55px;z-index:9;background:#fffdf7;box-shadow:0 2px 8px #0001}
+.planTabsBar{background:#f7f4e8;border-bottom:1px solid #ddd5b8;margin:-12px -12px 12px;padding:8px 12px 0;display:flex;align-items:flex-end;gap:12px}
 .planTabs{display:flex;align-items:flex-end;gap:2px;min-width:0;flex:1;overflow-x:auto}
 .planFilter{display:flex;align-items:center;gap:6px;flex:0 0 auto;padding-bottom:8px;white-space:nowrap}
 .planFilter label{margin:0}
@@ -93,7 +94,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 <body>
 <header><h1>Turfight Planner</h1></header>
 <main>
-<section class="card grid">
+<section class="card grid recruitmentHeader">
   <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>支払方法</label><select id="bulkRate"><option value="0.9">一括払い（10%）</option><option value="0.95">分割払い（5%）</option></select></div>
