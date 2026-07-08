@@ -685,6 +685,7 @@ function getPlanData() {
     id: activePlanId,
     name: getPlanName(),
     activeRecruitmentRoundId: round.id,
+    viewFilter: document.getElementById('viewFilter').value,
     recruitmentRounds: {}
   };
   plan.recruitmentRounds[round.id] = {
@@ -705,8 +706,7 @@ function getRecruitmentRoundSettings(data, plan) {
     name: round.name,
     eventBudget: plan && plan.eventBudget != null ? plan.eventBudget : (data.eventBudget || ''),
     bulkRate: plan && plan.bulkRate != null ? plan.bulkRate : (data.bulkRate || '0.9'),
-    voucherAmount: plan && plan.voucherAmount != null ? plan.voucherAmount : (data.voucherAmount || ''),
-    viewFilter: plan && plan.viewFilter != null ? plan.viewFilter : (data.viewFilter || 'all')
+    voucherAmount: plan && plan.voucherAmount != null ? plan.voucherAmount : (data.voucherAmount || '')
   };
 }
 
@@ -718,8 +718,7 @@ function getRecruitmentRoundSettingsData(existing) {
     name: round.name,
     eventBudget: getNormalizedMoneyInputValue('eventBudget'),
     bulkRate: document.getElementById('bulkRate').value,
-    voucherAmount: getNormalizedMoneyInputValue('voucherAmount'),
-    viewFilter: document.getElementById('viewFilter').value
+    voucherAmount: getNormalizedMoneyInputValue('voucherAmount')
   };
   return settings;
 }
@@ -728,7 +727,6 @@ function stripPlanHeaderFields(plan) {
   delete plan.eventBudget;
   delete plan.bulkRate;
   delete plan.voucherAmount;
-  delete plan.viewFilter;
   return plan;
 }
 
@@ -771,10 +769,12 @@ function readStoredData() {
 
 function createPlanFromLegacyData(data) {
   var round = getCurrentRecruitmentRound();
+  var settings = data.recruitmentRoundSettings && data.recruitmentRoundSettings[round.id];
   var plan = {
     id: DEFAULT_PLAN_ID,
     name: 'プラン1',
     activeRecruitmentRoundId: data.activeRecruitmentRoundId || round.id,
+    viewFilter: data.viewFilter || (settings && settings.viewFilter) || 'all',
     recruitmentRounds: data.recruitmentRounds || {}
   };
   if (!plan.recruitmentRounds[round.id]) {
@@ -870,14 +870,22 @@ function applyRecruitmentRoundSettings(data, plan) {
   document.getElementById('eventBudget').value = settings.eventBudget || '';
   document.getElementById('bulkRate').value = settings.bulkRate || '0.9';
   document.getElementById('voucherAmount').value = settings.voucherAmount || '';
-  document.getElementById('viewFilter').value = settings.viewFilter || 'all';
   formatMoneyInputValue('eventBudget');
   formatMoneyInputValue('voucherAmount');
 }
 
-function applyPlan(plan) {
+function getPlanViewFilter(data, plan) {
+  var round = getCurrentRecruitmentRound();
+  var settings = data && data.recruitmentRoundSettings && data.recruitmentRoundSettings[round.id];
+  if (plan && plan.viewFilter != null) return plan.viewFilter;
+  if (settings && settings.viewFilter != null) return settings.viewFilter;
+  return data && data.viewFilter != null ? data.viewFilter : 'all';
+}
+
+function applyPlan(plan, data) {
   var round = getCurrentRecruitmentRound();
   var savedHorses = getSavedHorsesForRound(plan, round.id);
+  document.getElementById('viewFilter').value = getPlanViewFilter(data || {}, plan);
   var cards = getRecruitmentRoundCards(round);
   for (var i=0; i<cards.length; i++) {
     var no = cards[i].getAttribute('data-no');
@@ -900,7 +908,7 @@ function loadState() {
   activePlanId = activePlan.id;
   applyRecruitmentRoundSettings(data, activePlan);
   renderPlanTabs(plans);
-  applyPlan(activePlan);
+  applyPlan(activePlan, data);
 }
 
 function switchPlan(planId) {
@@ -911,7 +919,7 @@ function switchPlan(planId) {
     if (plans[i].id === planId) {
       activePlanId = planId;
       renderPlanTabs(plans);
-      applyPlan(plans[i]);
+      applyPlan(plans[i], data);
       applyFilter();
       return;
     }
@@ -930,7 +938,7 @@ function addPlan() {
   activePlanId = newId;
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, recruitmentRoundSettings: getRecruitmentRoundSettingsData(data), plans: stripPlansHeaderFields(plans) }));
   renderPlanTabs(plans);
-  applyPlan(newPlan);
+  applyPlan(newPlan, data);
   applyFilter();
 }
 
@@ -967,7 +975,7 @@ function deletePlan(planId) {
   for (var i=0; i<plans.length; i++) {
     if (plans[i].id === activePlanId) activePlan = plans[i];
   }
-  applyPlan(activePlan);
+  applyPlan(activePlan, data);
   applyFilter();
 }
 
@@ -1232,7 +1240,10 @@ function wireEvents() {
   wireMoneyInput('eventBudget');
   wireMoneyInput('voucherAmount');
 
-  document.getElementById('viewFilter').onchange = applyFilter;
+  document.getElementById('viewFilter').onchange = function() {
+    applyFilter();
+    saveState();
+  };
   document.getElementById('contextRenamePlan').onclick = function() {
     var planId = document.getElementById('planContextMenu').getAttribute('data-plan-id');
     hidePlanContextMenu();
