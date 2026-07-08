@@ -17,8 +17,11 @@ h1{font-size:20px;margin:0}
 main{padding:12px;max-width:920px;margin:auto}
 .card{background:#fffdf7;border:1px solid #ddd5b8;border-radius:14px;padding:12px;margin-bottom:12px}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.planTabsBar{position:sticky;top:52px;z-index:9;background:#f7f4e8;border-bottom:1px solid #ddd5b8;margin:-12px -12px 12px;padding:8px 12px 0;overflow-x:auto}
-.planTabs{display:flex;align-items:flex-end;gap:2px;min-width:max-content}
+.planTabsBar{position:sticky;top:52px;z-index:9;background:#f7f4e8;border-bottom:1px solid #ddd5b8;margin:-12px -12px 12px;padding:8px 12px 0;display:flex;align-items:flex-end;gap:12px}
+.planTabs{display:flex;align-items:flex-end;gap:2px;min-width:0;flex:1;overflow-x:auto}
+.planFilter{display:flex;align-items:center;gap:6px;flex:0 0 auto;padding-bottom:8px;white-space:nowrap}
+.planFilter label{margin:0}
+.planFilter select{min-width:150px}
 .planTabWrap{position:relative;display:inline-flex;align-items:flex-end}
 .planTab{max-width:180px;padding:8px 32px 8px 14px;border:1px solid #d6c89d;border-bottom-color:#b79568;border-radius:10px 10px 0 0;background:#eee7cf;color:#4a3b17;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:inset 0 -2px 0 #d6c89d}
 .planTab.active{background:#fffdf7;color:#222;border-color:#b79568;border-bottom-color:#fffdf7;box-shadow:0 -1px 6px #0001}
@@ -94,11 +97,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
   <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>支払方法</label><select id="bulkRate"><option value="0.9">一括払い（10%）</option><option value="0.95">分割払い（5%）</option></select></div>
-  <div><label>表示</label><select id="viewFilter"><option value="all">全頭</option><option value="selected">出資口数1以上</option><option value="no200">200口を除外</option></select></div>
 </section>
 
 <nav class="planTabsBar" aria-label="検討プラン">
   <div id="planTabs" class="planTabs"></div>
+  <div class="planFilter"><label>表示</label><select id="viewFilter"><option value="all">全頭</option><option value="selected">出資口数1以上</option><option value="no200">200口を除外</option></select></div>
 </nav>
 <div id="planContextMenu" class="planContextMenu hidden" role="menu">
   <button type="button" id="contextRenamePlan" role="menuitem">名前変更</button>
