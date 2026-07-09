@@ -46,6 +46,7 @@ button{background:#7c6a25;color:white;border:0;font-weight:bold}
 .kpi.bad .value{color:#b42318}
 .kpi.ok .value{color:#0f7b43}
 .help{font-size:12px;color:#666;margin-top:8px}
+.recruitmentHeader .help{grid-column:1/-1}
 
 .cardList{display:grid;gap:12px}
 .horseCard{background:#fff;border:1px solid #ddd5b8;border-radius:16px;padding:12px;box-shadow:0 1px 4px #0001}
@@ -99,6 +100,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
   <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>支払方法</label><select id="bulkRate"><option value="0.9">一括払い（10%）</option><option value="0.95">分割払い（5%）</option></select></div>
+  <div class="help">金券は入力額を差し引きます。ツアー割引20,000円は出資口数が合計3口以上のときだけ適用します。出資口数・メモ・予算・上限・金券・表示条件はこの端末のブラウザに自動保存されます。</div>
 </section>
 
 <nav class="planTabsBar" aria-label="検討プラン">
@@ -120,11 +122,6 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
   <div class="kpi"><div class="name">ツアー割引</div><div id="tourDiscount" class="value">¥0</div></div>
   <div class="kpi"><div class="name">支払総額</div><div id="payment" class="value">¥0</div></div>
   <div class="kpi"><div class="name">今回上限残</div><div id="eventRemain" class="value">¥0</div></div>
-</section>
-
-<section class="card">
-  <button type="button" onclick="applyFilter()">表示更新</button>
-  <div class="help">金券は入力額を差し引きます。ツアー割引20,000円は出資口数が合計3口以上のときだけ適用します。出資口数・メモ・予算・上限・金券・表示条件はこの端末のブラウザに自動保存されます。</div>
 </section>
 
 <section class="cardList" id="cardList" data-recruitment-round-id="2026-current">
