@@ -40,8 +40,8 @@ label{display:block;font-size:12px;color:#666;margin-bottom:4px}
 input,select,button{font:inherit;padding:8px;border:1px solid #ddd5b8;border-radius:9px;background:white}
 input,select{width:100%;box-sizing:border-box}
 button{background:#7c6a25;color:white;border:0;font-weight:bold}
-.planSheetBody{background:#fffdf7;border:1px solid #b79568;border-bottom:0;border-radius:0 14px 0 0;box-shadow:none}
-.planSheetBody::after{content:"";display:block;height:12px;margin:12px -12px -12px;border:solid #b79568;border-width:0 1px 1px;border-radius:0 0 14px 14px;background:#fffdf7}
+.planSheetBody{background:#fffdf7;border:1px solid #b79568;border-radius:0 14px 14px 14px;box-shadow:none;overflow-x:hidden;overflow-y:auto;padding-bottom:28px;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch}
+.planSheetBody::-webkit-scrollbar{display:none}
 .planSheetBody .summary{background:transparent;border:0;border-bottom:1px solid #eadfbd;border-radius:0;margin-bottom:12px;padding:0 0 12px}
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .kpi{background:white;border:1px solid #ddd5b8;border-radius:12px;padding:10px}
