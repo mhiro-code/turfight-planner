@@ -115,6 +115,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 </div>
 <main>
 <div id="planContextMenu" class="planContextMenu hidden" role="menu">
+  <button type="button" id="contextDuplicatePlan" role="menuitem">複製</button>
   <button type="button" id="contextRenamePlan" role="menuitem">名前変更</button>
   <button type="button" id="contextDeletePlan" role="menuitem">削除</button>
 </div>
@@ -953,6 +954,48 @@ function addPlan() {
   applyFilter();
 }
 
+function getDuplicatePlanName(plans, sourceName) {
+  var baseName = sourceName + 'のコピー';
+  var name = baseName;
+  var number = 2;
+  while (plans.some(function(plan) { return plan.name === name; })) {
+    name = baseName + number;
+    number++;
+  }
+  return name;
+}
+
+function duplicatePlan(planId) {
+  saveState();
+  var data = readStoredData();
+  var plans = getPlans(data);
+  var sourcePlan = null;
+  var sourceName = '';
+  for (var i=0; i<plans.length; i++) {
+    if (plans[i].id === planId) {
+      sourcePlan = plans[i];
+      sourceName = plans[i].name || ('プラン' + (i + 1));
+    }
+  }
+  if (!sourcePlan) return;
+  var newPlan = JSON.parse(JSON.stringify(sourcePlan));
+  var newIdBase = 'plan-' + Date.now();
+  var newId = newIdBase;
+  var idNumber = 2;
+  while (plans.some(function(plan) { return plan.id === newId; })) {
+    newId = newIdBase + '-' + idNumber;
+    idNumber++;
+  }
+  newPlan.id = newId;
+  newPlan.name = getDuplicatePlanName(plans, sourceName);
+  plans.push(newPlan);
+  activePlanId = newPlan.id;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, recruitmentRoundSettings: getRecruitmentRoundSettingsData(data), plans: stripPlansHeaderFields(plans) }));
+  renderPlanTabs(plans);
+  applyPlan(newPlan, data);
+  applyFilter();
+}
+
 function renamePlan(planId) {
   saveState();
   var data = readStoredData();
@@ -1259,6 +1302,11 @@ function wireEvents() {
     var planId = document.getElementById('planContextMenu').getAttribute('data-plan-id');
     hidePlanContextMenu();
     renamePlan(planId);
+  };
+  document.getElementById('contextDuplicatePlan').onclick = function() {
+    var planId = document.getElementById('planContextMenu').getAttribute('data-plan-id');
+    hidePlanContextMenu();
+    duplicatePlan(planId);
   };
   document.getElementById('contextDeletePlan').onclick = function() {
     var planId = document.getElementById('planContextMenu').getAttribute('data-plan-id');
