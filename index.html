@@ -20,6 +20,7 @@ main::-webkit-scrollbar{display:none}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .stickyPlanControls{position:sticky;top:55px;z-index:9;background:#f7f4e8;max-width:920px;margin:0 auto;padding:12px 12px 0;flex:0 0 auto}
 .recruitmentHeader{background:#fffdf7}
+.recruitmentTitle{grid-column:1/-1;font-size:18px;font-weight:bold}
 .planTabsBar{background:#f7f4e8;margin:-12px -12px 0;padding:8px 12px 0;display:flex;align-items:flex-end;gap:12px;position:relative;z-index:2}
 .planTabs{display:flex;align-items:flex-end;gap:2px;min-width:0;flex:1;overflow-x:auto;padding-top:4px;padding-bottom:2px;margin-bottom:-2px}
 .planFilter{display:flex;align-items:center;gap:6px;flex:0 0 auto;padding-bottom:10px;white-space:nowrap}
@@ -102,6 +103,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 <header><h1>Turfight Planner</h1></header>
 <div class="stickyPlanControls">
 <section class="card grid recruitmentHeader">
+  <div id="recruitmentTitle" class="recruitmentTitle"></div>
   <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>支払方法</label><select id="bulkRate"><option value="0.9">一括払い（10%）</option><option value="0.95">分割払い（5%）</option></select></div>
@@ -569,6 +571,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 
 <script>
 var STORAGE_KEY = 'hitokuchiPlanner.card.v5.fixed';
+var RECRUITMENT_TITLE = '2026年新規1歳馬募集';
 var DEFAULT_PLAN_ID = 'default';
 var activePlanId = DEFAULT_PLAN_ID;
 
@@ -1322,6 +1325,7 @@ function wireEvents() {
   });
 }
 
+document.getElementById('recruitmentTitle').textContent = RECRUITMENT_TITLE;
 loadState();
 setupNativeKeyboardSuppression();
 setupNumericKeypad();
