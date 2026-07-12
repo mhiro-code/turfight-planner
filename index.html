@@ -569,8 +569,10 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 </main>
 <div id="numericKeypad" class="numericKeypad hidden" aria-label="数値入力テンキー"></div>
 
+<script src="js/schema-v4.js"></script>
 <script>
 var STORAGE_KEY = 'hitokuchiPlanner.card.v5.fixed';
+var BACKUP_STORAGE_KEY = STORAGE_KEY + '.backup.v3';
 var RECRUITMENT_TITLE = '2026年新規1歳馬募集';
 var DEFAULT_PLAN_ID = 'default';
 var activePlanId = DEFAULT_PLAN_ID;
@@ -676,11 +678,16 @@ function getHorseEntries(cards) {
   return horses;
 }
 
-function getSavedHorsesForRound(data, roundId) {
-  if (data.recruitmentRounds && data.recruitmentRounds[roundId] && data.recruitmentRounds[roundId].horses) {
-    return data.recruitmentRounds[roundId].horses;
-  }
-  return data.horses || {};
+function getCatalogContext() {
+  return {
+    rounds: getRecruitmentRounds().map(function(round) {
+      return { id: round.id, name: round.name };
+    })
+  };
+}
+
+function getSavedHorsesForRound(plan) {
+  return plan && plan.horseSelections ? plan.horseSelections : {};
 }
 
 function getPlanName() {
@@ -696,65 +703,35 @@ function getPlanData() {
   var round = getCurrentRecruitmentRound();
   var cards = getRecruitmentRoundCards(round);
   var horses = getHorseEntries(cards);
-  var plan = {
+  return {
     id: activePlanId,
     name: getPlanName(),
-    activeRecruitmentRoundId: round.id,
     viewFilter: document.getElementById('viewFilter').value,
-    recruitmentRounds: {}
+    horseSelections: horses
   };
-  plan.recruitmentRounds[round.id] = {
-    id: round.id,
-    name: round.name,
-    horses: horses
-  };
-  return plan;
 }
 
 
-function getRecruitmentRoundSettings(data, plan) {
+function getRecruitmentRoundSettings(data) {
   var round = getCurrentRecruitmentRound();
-  var settings = data.recruitmentRoundSettings && data.recruitmentRoundSettings[round.id];
-  if (settings) return settings;
+  var savedRound = data.recruitmentRounds && data.recruitmentRounds[round.id];
+  if (savedRound && savedRound.settings) return savedRound.settings;
+  return { eventBudget: '', bulkRate: '0.9', voucherAmount: '' };
+}
+
+function getRecruitmentRoundSettingsData() {
   return {
-    id: round.id,
-    name: round.name,
-    eventBudget: plan && plan.eventBudget != null ? plan.eventBudget : (data.eventBudget || ''),
-    bulkRate: plan && plan.bulkRate != null ? plan.bulkRate : (data.bulkRate || '0.9'),
-    voucherAmount: plan && plan.voucherAmount != null ? plan.voucherAmount : (data.voucherAmount || '')
-  };
-}
-
-function getRecruitmentRoundSettingsData(existing) {
-  var round = getCurrentRecruitmentRound();
-  var settings = existing.recruitmentRoundSettings || {};
-  settings[round.id] = {
-    id: round.id,
-    name: round.name,
     eventBudget: getNormalizedMoneyInputValue('eventBudget'),
     bulkRate: document.getElementById('bulkRate').value,
     voucherAmount: getNormalizedMoneyInputValue('voucherAmount')
   };
-  return settings;
-}
-
-function stripPlanHeaderFields(plan) {
-  delete plan.eventBudget;
-  delete plan.bulkRate;
-  delete plan.voucherAmount;
-  return plan;
-}
-
-function stripPlansHeaderFields(plans) {
-  for (var i=0; i<plans.length; i++) {
-    plans[i] = stripPlanHeaderFields(plans[i]);
-  }
-  return plans;
 }
 
 function getSaveData() {
   var existing = readStoredData();
-  var plans = stripPlansHeaderFields(existing.plans || [createPlanFromLegacyData(existing)]);
+  var round = getCurrentRecruitmentRound();
+  var savedRound = existing.recruitmentRounds[round.id];
+  var plans = savedRound ? savedRound.plans : [];
   var currentPlan = getPlanData();
   var replaced = false;
   for (var i=0; i<plans.length; i++) {
@@ -764,54 +741,67 @@ function getSaveData() {
     }
   }
   if (!replaced) plans.push(currentPlan);
-  return {
-    schemaVersion: 3,
+  existing.schemaVersion = 4;
+  existing.activeRecruitmentRoundId = round.id;
+  existing.recruitmentRounds[round.id] = {
+    id: round.id,
+    settings: getRecruitmentRoundSettingsData(),
     activePlanId: activePlanId,
-    recruitmentRoundSettings: getRecruitmentRoundSettingsData(existing),
     plans: plans
   };
+  return existing;
 }
 
+
+var storageReadError = '';
 
 function readStoredData() {
-  try {
-    var raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch(e) {
-    return {};
+  var raw;
+  try { raw = localStorage.getItem(STORAGE_KEY); }
+  catch(e) { storageReadError = '保存データを読み取れません: ' + e.message; }
+  var result = storageReadError ? null : TurfightSchemaV4.parseAndMigrateToV4(raw, getCatalogContext());
+  if (result && result.ok) {
+    storageReadError = '';
+    return result.data;
   }
+  if (result) storageReadError = result.error;
+  return TurfightSchemaV4.migrateToV4({}, getCatalogContext()).data;
 }
 
-function createPlanFromLegacyData(data) {
-  var round = getCurrentRecruitmentRound();
-  var settings = data.recruitmentRoundSettings && data.recruitmentRoundSettings[round.id];
-  var plan = {
-    id: DEFAULT_PLAN_ID,
-    name: 'プラン1',
-    activeRecruitmentRoundId: data.activeRecruitmentRoundId || round.id,
-    viewFilter: data.viewFilter || (settings && settings.viewFilter) || 'all',
-    recruitmentRounds: data.recruitmentRounds || {}
-  };
-  if (!plan.recruitmentRounds[round.id]) {
-    plan.recruitmentRounds[round.id] = {
-      id: round.id,
-      name: round.name,
-      horses: data.horses || {}
-    };
-  }
-  return plan;
+function createPlanFromLegacyData() {
+  return { id: DEFAULT_PLAN_ID, name: 'プラン1', viewFilter: 'all', horseSelections: {} };
 }
-
 
 function getPlans(data) {
-  if (data.plans && data.plans.length) return data.plans;
-  return [createPlanFromLegacyData(data || {})];
+  var round = getCurrentRecruitmentRound();
+  var savedRound = data.recruitmentRounds && data.recruitmentRounds[round.id];
+  if (savedRound && savedRound.plans && savedRound.plans.length) return savedRound.plans;
+  return [createPlanFromLegacyData()];
+}
+
+function saveV4Data(data) {
+  if (storageReadError) {
+    alert(storageReadError + '\n元データを保護するため保存を中止しました。');
+    return false;
+  }
+  var result = TurfightSchemaV4.writeV4(localStorage, STORAGE_KEY, BACKUP_STORAGE_KEY, data);
+  if (!result.ok) {
+    alert('保存またはバックアップに失敗しました。元データは変更されていません。\n' + result.error);
+  }
+  return result.ok;
 }
 
 function saveState() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(getSaveData()));
-  } catch(e) {}
+  return saveV4Data(getSaveData());
+}
+
+function savePlansForCurrentRound(data, plans) {
+  var round = getCurrentRecruitmentRound();
+  var savedRound = data.recruitmentRounds[round.id];
+  savedRound.activePlanId = activePlanId;
+  savedRound.plans = plans;
+  data.activeRecruitmentRoundId = round.id;
+  return saveV4Data(data);
 }
 
 function renderPlanTabs(plans) {
@@ -890,16 +880,12 @@ function applyRecruitmentRoundSettings(data, plan) {
 }
 
 function getPlanViewFilter(data, plan) {
-  var round = getCurrentRecruitmentRound();
-  var settings = data && data.recruitmentRoundSettings && data.recruitmentRoundSettings[round.id];
-  if (plan && plan.viewFilter != null) return plan.viewFilter;
-  if (settings && settings.viewFilter != null) return settings.viewFilter;
-  return data && data.viewFilter != null ? data.viewFilter : 'all';
+  return plan && plan.viewFilter != null ? plan.viewFilter : 'all';
 }
 
 function applyPlan(plan, data) {
   var round = getCurrentRecruitmentRound();
-  var savedHorses = getSavedHorsesForRound(plan, round.id);
+  var savedHorses = getSavedHorsesForRound(plan);
   document.getElementById('viewFilter').value = getPlanViewFilter(data || {}, plan);
   var cards = getRecruitmentRoundCards(round);
   for (var i=0; i<cards.length; i++) {
@@ -915,7 +901,9 @@ function applyPlan(plan, data) {
 function loadState() {
   var data = readStoredData();
   var plans = getPlans(data);
-  activePlanId = data.activePlanId || plans[0].id;
+  var round = getCurrentRecruitmentRound();
+  var savedRound = data.recruitmentRounds[round.id];
+  activePlanId = savedRound && savedRound.activePlanId || plans[0].id;
   var activePlan = plans[0];
   for (var i=0; i<plans.length; i++) {
     if (plans[i].id === activePlanId) activePlan = plans[i];
@@ -933,6 +921,7 @@ function switchPlan(planId) {
   for (var i=0; i<plans.length; i++) {
     if (plans[i].id === planId) {
       activePlanId = planId;
+      savePlansForCurrentRound(data, plans);
       renderPlanTabs(plans);
       applyPlan(plans[i], data);
       applyFilter();
@@ -951,7 +940,7 @@ function addPlan() {
   newPlan.name = 'プラン' + (plans.length + 1);
   plans.push(newPlan);
   activePlanId = newId;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, recruitmentRoundSettings: getRecruitmentRoundSettingsData(data), plans: stripPlansHeaderFields(plans) }));
+  savePlansForCurrentRound(data, plans);
   renderPlanTabs(plans);
   applyPlan(newPlan, data);
   applyFilter();
@@ -993,7 +982,7 @@ function duplicatePlan(planId) {
   newPlan.name = getDuplicatePlanName(plans, sourceName);
   plans.push(newPlan);
   activePlanId = newPlan.id;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, recruitmentRoundSettings: getRecruitmentRoundSettingsData(data), plans: stripPlansHeaderFields(plans) }));
+  savePlansForCurrentRound(data, plans);
   renderPlanTabs(plans);
   applyPlan(newPlan, data);
   applyFilter();
@@ -1013,7 +1002,7 @@ function renamePlan(planId) {
   for (var i=0; i<plans.length; i++) {
     if (plans[i].id === targetPlanId) plans[i].name = name;
   }
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, recruitmentRoundSettings: getRecruitmentRoundSettingsData(data), plans: stripPlansHeaderFields(plans) }));
+  savePlansForCurrentRound(data, plans);
   renderPlanTabs(plans);
 }
 
@@ -1026,7 +1015,7 @@ function deletePlan(planId) {
   if (!confirm('選択したプランを削除しますか？')) return;
   plans = plans.filter(function(plan) { return plan.id !== targetPlanId; });
   if (activePlanId === targetPlanId) activePlanId = plans[0].id;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ schemaVersion: 3, activePlanId: activePlanId, recruitmentRoundSettings: getRecruitmentRoundSettingsData(data), plans: stripPlansHeaderFields(plans) }));
+  savePlansForCurrentRound(data, plans);
   renderPlanTabs(plans);
   var activePlan = plans[0];
   for (var i=0; i<plans.length; i++) {
