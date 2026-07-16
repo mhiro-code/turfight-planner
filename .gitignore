@@ -1,0 +1,48 @@
+# Local audit backups and temporary work
+/codex-local-audit-backup-*/
+/tmp/
+
+# Browser profiles created by local UI checks
+**/cdp-profile/
+**/cdp-*-profile/
+**/measure-profile/
+**/profile-pc*/
+**/profile-ipad*/
+**/chrome-profile/
+**/browser-profile/
+
+# Authentication material and private keys
+**/auth.json
+**/credentials.json
+**/.sandbox-secrets/
+**/.env
+**/.env.*
+!**/.env.example
+**/.npmrc
+**/.pypirc
+**/id_rsa
+**/id_ed25519
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+
+# Local databases and journal files
+**/*.db
+**/*.db-wal
+**/*.db-shm
+**/*.sqlite
+**/*.sqlite3
+**/*.sqlite-wal
+**/*.sqlite-shm
+
+# Codex local state and session records
+**/session_index.jsonl
+**/sessions/**/rollout-*.jsonl
+**/state_*.sqlite*
+**/logs_*.sqlite*
+**/goals_*.sqlite*
+**/memories_*.sqlite*
+**/codex-dev.db*
+**/cap_sid
+**/installation_id
