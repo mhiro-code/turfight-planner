@@ -967,13 +967,17 @@ function loadState() {
 }
 
 function switchPlan(planId) {
-  saveState();
+  if (!saveState()) return;
   var data = readStoredData();
   var plans = getPlans(data);
   for (var i=0; i<plans.length; i++) {
     if (plans[i].id === planId) {
+      var prevPlanId = activePlanId;
       activePlanId = planId;
-      savePlansForCurrentRound(data, plans);
+      if (!savePlansForCurrentRound(data, plans)) {
+        activePlanId = prevPlanId;
+        return;
+      }
       renderPlanTabs(plans);
       applyPlan(plans[i], data);
       applyFilter();
@@ -983,7 +987,7 @@ function switchPlan(planId) {
 }
 
 function addPlan() {
-  saveState();
+  if (!saveState()) return;
   var data = readStoredData();
   var plans = getPlans(data);
   var newId = 'plan-' + Date.now();
@@ -991,8 +995,12 @@ function addPlan() {
   newPlan.id = newId;
   newPlan.name = 'プラン' + (plans.length + 1);
   plans.push(newPlan);
+  var prevPlanId = activePlanId;
   activePlanId = newId;
-  savePlansForCurrentRound(data, plans);
+  if (!savePlansForCurrentRound(data, plans)) {
+    activePlanId = prevPlanId;
+    return;
+  }
   renderPlanTabs(plans);
   applyPlan(newPlan, data);
   applyFilter();
@@ -1010,7 +1018,7 @@ function getDuplicatePlanName(plans, sourceName) {
 }
 
 function duplicatePlan(planId) {
-  saveState();
+  if (!saveState()) return;
   var data = readStoredData();
   var plans = getPlans(data);
   var sourcePlan = null;
@@ -1033,15 +1041,19 @@ function duplicatePlan(planId) {
   newPlan.id = newId;
   newPlan.name = getDuplicatePlanName(plans, sourceName);
   plans.push(newPlan);
+  var prevPlanId = activePlanId;
   activePlanId = newPlan.id;
-  savePlansForCurrentRound(data, plans);
+  if (!savePlansForCurrentRound(data, plans)) {
+    activePlanId = prevPlanId;
+    return;
+  }
   renderPlanTabs(plans);
   applyPlan(newPlan, data);
   applyFilter();
 }
 
 function renamePlan(planId) {
-  saveState();
+  if (!saveState()) return;
   var data = readStoredData();
   var plans = getPlans(data);
   var targetPlanId = planId || activePlanId;
@@ -1054,20 +1066,24 @@ function renamePlan(planId) {
   for (var i=0; i<plans.length; i++) {
     if (plans[i].id === targetPlanId) plans[i].name = name;
   }
-  savePlansForCurrentRound(data, plans);
+  if (!savePlansForCurrentRound(data, plans)) return;
   renderPlanTabs(plans);
 }
 
 function deletePlan(planId) {
-  saveState();
+  if (!saveState()) return;
   var data = readStoredData();
   var plans = getPlans(data);
   var targetPlanId = planId || activePlanId;
   if (plans.length <= 1) return;
   if (!confirm('選択したプランを削除しますか？')) return;
   plans = plans.filter(function(plan) { return plan.id !== targetPlanId; });
+  var prevPlanId = activePlanId;
   if (activePlanId === targetPlanId) activePlanId = plans[0].id;
-  savePlansForCurrentRound(data, plans);
+  if (!savePlansForCurrentRound(data, plans)) {
+    activePlanId = prevPlanId;
+    return;
+  }
   renderPlanTabs(plans);
   var activePlan = plans[0];
   for (var i=0; i<plans.length; i++) {
