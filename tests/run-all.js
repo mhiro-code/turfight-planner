@@ -3,37 +3,67 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { spawnSync } = require('node:child_process');
+const { once } = require('node:events');
+const { run } = require('node:test');
+const { spec } = require('node:test/reporters');
 
-const testsDir = __dirname;
-const testFiles = fs
-  .readdirSync(testsDir, { withFileTypes: true })
-  .filter(entry => entry.isFile() && entry.name.endsWith('.test.js'))
-  .map(entry => entry.name)
-  .sort((a, b) => a.localeCompare(b));
+async function main() {
+  const testsDir = __dirname;
+  const testFiles = fs
+    .readdirSync(testsDir, { withFileTypes: true })
+    .filter(entry => entry.isFile() && entry.name.endsWith('.test.js'))
+    .map(entry => entry.name)
+    .sort((a, b) => a.localeCompare(b));
 
-if (testFiles.length === 0) {
-  console.log('No test files found in tests/*.test.js');
-  process.exit(0);
-}
+  if (testFiles.length === 0) {
+    console.error('No test files found in tests/*.test.js');
+    process.exitCode = 1;
+    return;
+  }
 
-let failed = 0;
+  console.log(`Running ${testFiles.length} test file(s):`);
+  for (const file of testFiles) {
+    console.log(`- ${file}`);
+  }
+  console.log('');
 
-for (const file of testFiles) {
-  console.log(`\n==> Running ${file}`);
-  const result = spawnSync(process.execPath, ['--test', path.join(testsDir, file)], {
-    stdio: 'inherit'
+  const files = testFiles.map(file => path.join(testsDir, file));
+  let failed = 0;
+  let executionError = null;
+
+  const stream = run({
+    files,
+    isolation: 'none',
+    concurrency: false
   });
 
-  if (result.error || result.status !== 0) {
+  stream.on('test:fail', () => {
     failed += 1;
+  });
+  stream.on('error', error => {
+    executionError = error;
+  });
+
+  stream.compose(spec()).pipe(process.stdout);
+  await once(stream, 'end');
+
+  if (executionError) {
+    console.error(`\nTest run could not complete: ${executionError.message}`);
+    process.exitCode = 1;
+    return;
   }
+
+  if (failed === 0) {
+    console.log(`\nAll tests passed (${testFiles.length} files).`);
+    process.exitCode = 0;
+    return;
+  }
+
+  console.error(`\nTest run failed (${failed} failure${failed === 1 ? '' : 's'}).`);
+  process.exitCode = 1;
 }
 
-if (failed === 0) {
-  console.log(`\nAll tests passed (${testFiles.length} files).`);
-  process.exit(0);
-}
-
-console.error(`\nTest run failed (${failed}/${testFiles.length} files).`);
-process.exit(1);
+main().catch(error => {
+  console.error(error);
+  process.exitCode = 1;
+});
