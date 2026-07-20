@@ -30,12 +30,30 @@ function parseFrontmatter(content) {
 }
 
 const REQUIRED_FIELDS = ['name', 'description', 'target', 'tools', 'disable-model-invocation', 'user-invocable'];
-const COMMON_TOOLS = ['read', 'search', 'execute'];
+
+function assertToolsExact(actual, expected, label) {
+  assert.ok(Array.isArray(actual), `${label}: tools が配列ではありません`);
+  const actualSorted = [...actual].sort();
+  const expectedSorted = [...expected].sort();
+  assert.deepEqual(
+    actualSorted,
+    expectedSorted,
+    `${label}: tools の集合が期待値と一致しません。実際: [${actualSorted}]、期待: [${expectedSorted}]`
+  );
+}
 
 [
-  { label: 'ナイチンゲール・QA', file: 'nightingale-qa.agent.md' },
-  { label: '田中久重・実装', file: 'tanaka-hisashige-implementer.agent.md' }
-].forEach(({ label, file }) => {
+  {
+    label: 'ナイチンゲール・QA',
+    file: 'nightingale-qa.agent.md',
+    expectedTools: ['read', 'search', 'execute']
+  },
+  {
+    label: '田中久重・実装',
+    file: 'tanaka-hisashige-implementer.agent.md',
+    expectedTools: ['read', 'search', 'edit', 'execute']
+  }
+].forEach(({ label, file, expectedTools }) => {
   test(`${label}: エージェントファイルが存在する`, () => {
     assert.ok(fs.existsSync(path.join(AGENTS_DIR, file)));
   });
@@ -67,25 +85,8 @@ const COMMON_TOOLS = ['read', 'search', 'execute'];
     assert.equal(fm['user-invocable'], true);
   });
 
-  test(`${label}: tools が配列である`, () => {
+  test(`${label}: tools が順序非依存で完全一致する`, () => {
     const fm = parseFrontmatter(readAgentFile(file));
-    assert.ok(Array.isArray(fm.tools), 'toolsが配列ではありません');
+    assertToolsExact(fm.tools, expectedTools, label);
   });
-
-  test(`${label}: tools に ${COMMON_TOOLS.join('・')} を含む`, () => {
-    const fm = parseFrontmatter(readAgentFile(file));
-    for (const tool of COMMON_TOOLS) {
-      assert.ok(fm.tools.includes(tool), `tools に ${tool} が含まれていません`);
-    }
-  });
-});
-
-test('ナイチンゲール・QA: tools に edit を含まない（読み取り専用）', () => {
-  const fm = parseFrontmatter(readAgentFile('nightingale-qa.agent.md'));
-  assert.ok(!fm.tools.includes('edit'), 'QAエージェントは edit ツールを持ってはなりません');
-});
-
-test('田中久重・実装: tools に edit を含む', () => {
-  const fm = parseFrontmatter(readAgentFile('tanaka-hisashige-implementer.agent.md'));
-  assert.ok(fm.tools.includes('edit'), '実装エージェントは edit ツールを持たなければなりません');
 });
