@@ -13,7 +13,7 @@
 <style>
 :root{
   color-scheme:light;
-  --header-height:52px;
+  --header-height:64px;
   --system-grouped:#f8e4ec;
   --surface:#fff;
   --surface-subtle:#f7f7fa;
@@ -32,23 +32,38 @@
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;font-size:16px;line-height:1.35;font-optical-sizing:auto;-webkit-font-smoothing:antialiased;background:var(--system-grouped);color:var(--text);display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
-header{position:sticky;top:0;z-index:10;height:var(--header-height);min-height:var(--header-height);display:flex;align-items:center;padding:0 16px;background:rgba(28,28,30,.94);color:#fff;border-bottom:1px solid rgba(255,255,255,.16);box-shadow:0 1px 12px rgba(0,0,0,.22);-webkit-backdrop-filter:blur(20px) saturate(140%);backdrop-filter:blur(20px) saturate(140%)}
-h1{font-size:20px;line-height:1.2;letter-spacing:-.02em;font-weight:700;margin:0}
+.appHeader{position:sticky;top:0;z-index:30;height:var(--header-height);min-height:var(--header-height);display:flex;align-items:center;padding:0 16px;background:rgba(28,28,30,.96);color:#fff;border-bottom:1px solid rgba(255,255,255,.16);box-shadow:0 1px 12px rgba(0,0,0,.22);-webkit-backdrop-filter:blur(20px) saturate(140%);backdrop-filter:blur(20px) saturate(140%)}
+.appHeaderInner{width:100%;max-width:920px;margin:0 auto;display:flex;align-items:center;gap:16px;min-width:0}
+.headerIdentity{display:flex;align-items:baseline;gap:12px;min-width:0;flex:1}
+h1{font-size:19px;line-height:1.2;letter-spacing:-.02em;font-weight:700;margin:0;white-space:nowrap}
+.recruitmentTitle{font-size:15px;line-height:1.25;letter-spacing:-.01em;font-weight:650;color:rgba(255,255,255,.76);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settingsSnapshot{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+.settingSnapshot{min-width:72px;text-align:right}
+.settingSnapshot span{display:block;font-size:10px;line-height:1.1;color:rgba(255,255,255,.62);white-space:nowrap}
+.settingSnapshot b{display:block;margin-top:2px;font-size:13px;line-height:1.15;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.settingsToggle{min-height:40px;padding:7px 12px;border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.12);color:#fff}
+.settingsScrim{position:fixed;z-index:19;inset:var(--header-height) 0 0;background:rgba(0,0,0,.16);opacity:0;pointer-events:none;transition:opacity 160ms ease}
+.settingsScrim.isOpen{opacity:1;pointer-events:auto}
+.settingsPanel{position:fixed;z-index:31;top:var(--header-height);left:50%;width:min(920px,calc(100% - 24px));max-height:calc(100dvh - var(--header-height) - 16px);overflow-y:auto;padding:14px;background:var(--surface);border:1px solid var(--separator-strong);border-top:0;border-radius:0 0 var(--radius-card) var(--radius-card);box-shadow:0 16px 40px rgba(0,0,0,.24);opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,-8px);transition:opacity 160ms ease,transform 160ms ease,visibility 0s linear 160ms}
+.settingsPanel.isOpen{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0);transition-delay:0s}
+.settingsGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.settingsHelp{margin-top:10px;border-top:1px solid var(--separator);padding-top:8px}
+.settingsHelp summary{cursor:pointer;color:var(--brand-action);font-weight:650}
+.settingsHelp .help{margin:8px 0 0}
 main{flex:1 1 auto;padding:0 0 16px;max-width:920px;margin:0 auto;overflow-x:hidden;overflow-y:auto;min-height:0;width:100%;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch}
 main::-webkit-scrollbar{display:none}
 .card{background:var(--surface);border:1px solid var(--separator);border-radius:var(--radius-card);padding:12px;margin-bottom:12px;box-shadow:var(--shadow-card)}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.stickyPlanControls{position:sticky;top:var(--header-height);z-index:9;width:100%;max-width:920px;margin:0 auto;padding:12px 12px 0;flex:0 0 auto;background:rgba(248,228,236,.88);border-bottom:1px solid rgba(60,60,67,.12);box-shadow:0 8px 20px rgba(0,0,0,.04);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
-.recruitmentHeader{background:var(--surface);border-color:var(--separator-strong);border-bottom:0;border-radius:var(--radius-card) var(--radius-card) 0 0;margin:0 -12px;box-shadow:none}
-.recruitmentTitle{grid-column:1/-1;font-size:18px;line-height:1.25;letter-spacing:-.015em;font-weight:700;color:var(--text)}
-.planTabsBar{background:var(--surface);margin:0 -12px;padding:8px 12px 0;border-left:1px solid var(--separator-strong);border-right:1px solid var(--separator-strong);display:flex;align-items:flex-end;gap:12px;position:relative;z-index:2}
+.stickyPlanControls{position:sticky;top:var(--header-height);z-index:9;width:100%;flex:0 0 auto;background:rgba(255,255,255,.96);border-bottom:1px solid var(--separator-strong);box-shadow:0 4px 12px rgba(0,0,0,.06);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+.planTabsBar{width:100%;max-width:920px;margin:0 auto;padding:6px 10px 0;display:flex;align-items:flex-end;gap:8px;position:relative;z-index:2}
 .planTabs{display:flex;align-items:flex-end;gap:4px;min-width:0;flex:1;overflow-x:auto;overflow-y:hidden;padding-top:4px;padding-bottom:2px;margin-bottom:-2px}
-.planFilter{display:flex;align-items:center;gap:8px;flex:0 0 auto;padding-bottom:8px;white-space:nowrap}
+.planTabs::-webkit-scrollbar{height:3px}
+.planFilter{display:flex;align-items:center;gap:0;flex:0 0 auto;padding-bottom:6px;white-space:nowrap;background:var(--surface)}
 .planFilter label{margin:0}
-.planFilter select{min-width:150px}
+.planFilter select{width:auto;min-width:134px}
 .planTabWrap{position:relative;display:inline-flex;align-items:flex-end}
-.planTab{max-width:180px;min-height:44px;margin-top:4px;padding:8px 48px 8px 14px;border:1px solid var(--separator);border-bottom-color:var(--separator-strong);border-radius:12px 12px 0 0;background:#e5e5ea;color:var(--text);font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:inset 0 -1px 0 rgba(0,0,0,.06)}
-.planTab.active{position:relative;z-index:3;margin-top:0;margin-bottom:-2px;padding-top:10px;padding-bottom:12px;background:var(--text);color:#fff;border-color:var(--brand-accent);border-bottom:0;box-shadow:0 -2px 10px rgba(0,0,0,.12)}
+.planTab{max-width:160px;min-height:40px;margin-top:4px;padding:7px 44px 7px 12px;border:1px solid var(--separator);border-bottom-color:var(--separator-strong);border-radius:10px 10px 0 0;background:#e5e5ea;color:var(--text);font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:inset 0 -1px 0 rgba(0,0,0,.06)}
+.planTab.active{position:relative;z-index:3;margin-top:0;margin-bottom:-2px;padding-top:9px;padding-bottom:10px;background:var(--text);color:#fff;border-color:var(--brand-accent);border-bottom:0;box-shadow:0 -2px 10px rgba(0,0,0,.12)}
 .planTab.active::after{content:"";position:absolute;left:12px;right:12px;bottom:2px;height:3px;border-radius:999px;background:var(--brand-accent)}
 .planTabMenuButton{position:absolute;z-index:4;right:2px;top:2px;width:44px;height:44px;min-height:44px;padding:0;border-radius:10px;background:transparent;color:var(--text);font-weight:700;line-height:1}
 .planTab.active + .planTabMenuButton{background:transparent;color:rgba(255,255,255,.92)}
@@ -58,48 +73,66 @@ main::-webkit-scrollbar{display:none}
 .planContextMenu button{display:block;width:100%;min-height:44px;margin:0;padding:8px 12px;border-radius:8px;background:transparent;color:var(--text);text-align:left;font-weight:400}
 .planContextMenu button:disabled{color:var(--secondary);background:transparent;opacity:.55}
 label{display:block;font-size:12px;line-height:1.3;letter-spacing:.01em;color:var(--secondary);margin-bottom:4px}
-input,select,button{font:inherit;min-height:44px;padding:8px 10px;border:1px solid var(--separator);border-radius:10px;background:var(--surface)}
-input,select{width:100%;color:var(--text)}
+input,select,textarea,button{font:inherit;min-height:44px;padding:8px 10px;border:1px solid var(--separator);border-radius:10px;background:var(--surface)}
+input,select,textarea{width:100%;color:var(--text)}
 button{background:var(--brand-action);color:#fff;border-color:transparent;font-weight:650;cursor:pointer;touch-action:manipulation;transition:transform 100ms ease-out,background-color 140ms ease-out,box-shadow 140ms ease-out}
 button:disabled{cursor:default;opacity:.5}
 button:not(:disabled):active{transform:scale(.97);filter:brightness(.94);transition:none}
-input:focus-visible,select:focus-visible,button:focus-visible{outline:0;box-shadow:0 0 0 2px var(--surface),0 0 0 5px var(--brand-accent)}
-.planSheetBody{background:var(--surface);border:1px solid var(--separator-strong);border-radius:0 0 var(--radius-card) var(--radius-card);box-shadow:var(--shadow-card);padding:12px}
-.planSheetBody .summary{background:transparent;border:0;border-bottom:1px solid var(--separator);border-radius:0;margin-bottom:12px;padding:0 0 12px;box-shadow:none}
-.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:0;box-shadow:0 0 0 2px var(--surface),0 0 0 5px var(--brand-accent)}
+.planSheetBody{background:var(--surface);border:1px solid var(--separator-strong);border-top:0;border-radius:0 0 var(--radius-card) var(--radius-card);box-shadow:var(--shadow-card);padding:0 12px 12px}
+.planSheetBody .summary{position:sticky;top:0;z-index:8;background:rgba(255,255,255,.97);border:0;border-bottom:1px solid var(--separator);border-radius:0;margin:0 -12px 10px;padding:10px 12px;box-shadow:0 6px 10px -9px rgba(0,0,0,.72);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%)}
+.summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .kpi{background:var(--surface);border:1px solid var(--separator);border-radius:12px;padding:10px}
+.kpi.primary{border-color:var(--brand-accent);background:var(--brand-tint)}
 .kpi .name{font-size:12px;color:var(--secondary)}
-.kpi .value{font-size:20px;line-height:1.2;letter-spacing:-.02em;font-weight:750;text-align:right;color:var(--text);font-variant-numeric:tabular-nums}
+.kpi .value{font-size:16px;line-height:1.2;letter-spacing:-.02em;font-weight:750;text-align:right;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi.primary .value{font-size:18px}
 .kpi.bad .value{color:var(--danger)}
 .kpi.ok .value{color:var(--success)}
+.kpi.isUpdated{animation:kpiUpdate 520ms ease-out}
+@keyframes kpiUpdate{0%{background:#ffd9e7;box-shadow:0 0 0 2px rgba(255,45,85,.22)}100%{background:var(--surface);box-shadow:none}}
+.kpi.primary.isUpdated{animation-name:kpiPrimaryUpdate}
+@keyframes kpiPrimaryUpdate{0%{background:#ffc9dc;box-shadow:0 0 0 2px rgba(255,45,85,.28)}100%{background:var(--brand-tint);box-shadow:none}}
 .help{font-size:12px;line-height:1.45;color:var(--secondary);margin-top:8px}
 .recruitmentHeader .help{grid-column:1/-1}
 
-.cardList{display:grid;gap:12px}
+.cardList{display:grid;gap:8px}
 .horseCard{background:var(--surface);border:1px solid var(--separator);border-radius:var(--radius-card);padding:12px;box-shadow:var(--shadow-card)}
 .horseCard.selected{background:var(--brand-tint);border-color:var(--brand-accent);box-shadow:0 0 0 1px var(--brand-accent),var(--shadow-card)}
-.cardTop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.cardTop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.horseIdentity{min-width:0;flex:1;cursor:pointer;border-radius:8px}
+.horseIdentity:focus-visible{outline:0;box-shadow:0 0 0 3px var(--brand-accent)}
+.horseToggle{width:44px;min-width:44px;height:44px;padding:0;background:transparent;color:var(--text);border-color:transparent;font-size:20px;line-height:1}
+.horseToggle[aria-disabled="true"]{cursor:default;opacity:.56}
+.horseCard:not(.isCollapsed) .horseToggle{transform:rotate(180deg)}
+.horseCard:not(.isCollapsed) .horseToggle:active{transform:rotate(180deg) scale(.97)}
 .no{font-size:12px;letter-spacing:.01em;color:var(--secondary);font-weight:650}
-h2{font-size:17px;line-height:1.3;letter-spacing:-.01em;font-weight:700;color:var(--text);margin:2px 0 8px}
+h2{font-size:17px;line-height:1.3;letter-spacing:-.01em;font-weight:700;color:var(--text);margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .badges{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
 .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px;line-height:1.2;font-weight:600;white-space:nowrap}
 .s1000{background:#dcfce7;color:#166534}
 .s400{background:#fef3c7;color:#92400e}
 .s200{background:#fee2e2;color:#991b1b}
-.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
 .meta div,.amounts div{background:var(--surface-subtle);border:1px solid var(--separator);border-radius:10px;padding:8px;min-width:0}
 .meta span,.amounts span{display:block;font-size:11px;line-height:1.35;letter-spacing:.01em;color:var(--secondary);margin-bottom:2px}
 .meta b,.amounts b{font-size:14px;color:var(--text);word-break:break-word;font-variant-numeric:tabular-nums}
-.inputLine{display:grid;grid-template-columns:1fr 132px;gap:8px;align-items:end;margin-top:8px}
+.horseControlsRow{display:grid;grid-template-columns:minmax(260px,1fr) minmax(320px,2fr);gap:8px;align-items:end;margin-top:8px}
+.inputLine{display:grid;grid-template-columns:90px 1fr;gap:8px;align-items:end}
+.inputLine label{align-self:center;margin:0}
 .unitControls{display:grid;grid-template-columns:44px 1fr 44px;gap:4px}
 .unitButton{padding:8px 0;background:#e5e5ea;color:var(--text);border-color:var(--separator)}
 .units{text-align:right;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
 #eventBudget,#voucherAmount{text-align:right;font-variant-numeric:tabular-nums}
-.amounts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.amounts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
 .amounts b{font-size:18px;letter-spacing:-.015em;font-weight:750}
-.memoLabel{margin-top:8px}
+.memoField{margin-top:8px}
+.memoLabel{margin-top:0}
+.memo{display:block;resize:none;min-height:44px;max-height:112px;overflow-y:hidden;line-height:1.35}
+.memo.isOverflowing{overflow-y:auto}
+.horseCard.isCollapsed .horseDetails,.horseCard.isCollapsed .amounts{display:none}
 .hidden{display:none!important}
-.numericKeypad{position:absolute;z-index:30;width:196px;padding:8px;background:var(--surface);border:1px solid var(--separator-strong);border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.2)}
+.numericKeypad{position:absolute;z-index:50;width:196px;padding:8px;background:var(--surface);border:1px solid var(--separator-strong);border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.2)}
 .numericKeypad.hidden{display:none!important}
 .keypadGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .keypadKey{min-height:44px;padding:8px 0;border-radius:10px;background:#2c2c2e;color:#fff}
@@ -117,20 +150,20 @@ h2{font-size:17px;line-height:1.3;letter-spacing:-.01em;font-weight:700;color:va
   .keypadClose:hover{background:#48484a}
 }
 @supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
-  header{background:#1c1c1e}
-  .stickyPlanControls{background:rgba(248,228,236,.98)}
+  .appHeader{background:#1c1c1e}
+  .stickyPlanControls{background:#fff}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
   button:not(:disabled):active{transform:none}
 }
 @media(prefers-reduced-transparency:reduce){
-  header{background:#1c1c1e;-webkit-backdrop-filter:none;backdrop-filter:none}
-  .stickyPlanControls{background:var(--system-grouped);-webkit-backdrop-filter:none;backdrop-filter:none}
+  .appHeader{background:#1c1c1e;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .stickyPlanControls,.planSheetBody .summary{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}
 }
 @media(prefers-contrast:more){
   :root{--secondary:#3a3a3c;--separator:#8e8e93;--separator-strong:#1c1c1e;--brand-action:#9e0f48;--brand-accent:#c2185b}
-  header{background:#1c1c1e;color:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;border-color:#fff}
+  .appHeader{background:#1c1c1e;color:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;border-color:#fff}
   .stickyPlanControls{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;border-color:var(--text)}
   .planTab.active{background:#000;color:#fff;border-color:var(--brand-accent)}
   .planTab.active + .planTabMenuButton{color:#fff}
@@ -138,33 +171,89 @@ h2{font-size:17px;line-height:1.3;letter-spacing:-.01em;font-weight:700;color:va
 }
 @media(max-width:700px){
   main{padding:0 0 16px}
-  .planSheetBody{padding:8px}
-  .grid,.summary{grid-template-columns:1fr 1fr}
-  .kpi .value{font-size:17px}
+  .appHeaderInner{gap:8px}
+  .headerIdentity{gap:8px}
+  .settingsSnapshot{gap:7px}
+  .settingSnapshot{min-width:64px}
+  .planSheetBody{padding:0 8px 8px}
+  .planSheetBody .summary{margin:0 -8px 8px;padding:8px}
+  .summary{grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}
+  .kpi{padding:7px 6px}
+  .kpi .name{font-size:10px}
+  .kpi .value,.kpi.primary .value{font-size:14px}
+  .horseControlsRow{grid-template-columns:minmax(220px,1fr) minmax(300px,2fr)}
   h2{font-size:16px}
 }
+@media(max-width:600px){
+  .summary{grid-template-columns:1fr 1fr}
+  .horseControlsRow{grid-template-columns:1fr}
+}
 @media(max-width:430px){
+  :root{--header-height:88px}
+  .appHeader{padding:7px 8px}
+  .appHeaderInner{display:grid;grid-template-rows:1fr 1fr;gap:4px}
+  .headerIdentity{width:100%;justify-content:space-between;gap:6px}
+  h1{font-size:13px}
+  .recruitmentTitle{font-size:12px;text-align:right}
+  .settingsSnapshot{width:100%;display:grid;grid-template-columns:1fr 1fr .85fr auto;gap:4px}
+  .settingSnapshot{min-width:0;text-align:left}
+  .settingSnapshot span{font-size:9px}
+  .settingSnapshot b{font-size:11px;overflow:visible}
+  .settingsToggle{min-height:36px;padding:5px 9px;font-size:13px}
+  .settingsPanel{width:calc(100% - 16px);max-height:calc(100dvh - var(--header-height) - 8px);padding:12px}
+  .settingsGrid{grid-template-columns:1fr;gap:8px}
+  .planTabsBar{padding:4px 6px 0;gap:5px}
+  .planTab{max-width:126px;min-height:42px;padding-left:10px;padding-right:42px}
+  .planTabAdd{min-height:42px}
+  .planFilter{padding-bottom:4px}
+  .planFilter select{min-width:104px;max-width:112px;padding-left:7px;padding-right:22px;font-size:13px}
   .grid{grid-template-columns:1fr 1fr}
   .summary{grid-template-columns:1fr 1fr}
-  .meta{grid-template-columns:1fr}
-  .amounts{grid-template-columns:1fr}
+  .kpi{min-width:0;padding:8px}
+  .kpi .name{font-size:11px}
+  .kpi .value,.kpi.primary .value{font-size:16px}
+  .cardTop{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px}
+  .badges{grid-column:1/2;justify-content:flex-start}
+  .horseToggle{grid-column:2;grid-row:1/3}
+  .meta{grid-template-columns:1fr 1fr}
+  .horseControlsRow{grid-template-columns:1fr}
+  .inputLine{grid-template-columns:76px 1fr}
+  .amounts{grid-template-columns:1fr 1fr}
+  .amounts b{font-size:16px}
 }
 </style>
 </head>
 <body>
-<header><h1>Turfight Planner</h1></header>
-<div class="stickyPlanControls">
-<section class="card grid recruitmentHeader">
-  <div id="recruitmentTitle" class="recruitmentTitle"></div>
-  <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
-  <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
-  <div><label>支払方法</label><select id="bulkRate"><option value="0.9">一括払い（10%）</option><option value="0.95">分割払い（5%）</option></select></div>
-  <div class="help">金券は入力額を差し引きます。ツアー割引20,000円は出資口数が合計3口以上のときだけ適用します。出資口数・メモ・予算・上限・金券・表示条件はこの端末のブラウザに自動保存されます。</div>
+<header class="appHeader">
+  <div class="appHeaderInner">
+    <div class="headerIdentity">
+      <h1>Turfight Planner</h1>
+      <div id="recruitmentTitle" class="recruitmentTitle"></div>
+    </div>
+    <div class="settingsSnapshot" aria-label="募集設定">
+      <div class="settingSnapshot"><span>今回上限</span><b id="eventBudgetSnapshot">¥0</b></div>
+      <div class="settingSnapshot"><span>金券</span><b id="voucherSnapshot">¥0</b></div>
+      <div class="settingSnapshot"><span>支払方法</span><b id="bulkRateSnapshot">一括10%</b></div>
+      <button type="button" id="settingsToggle" class="settingsToggle" aria-expanded="false" aria-controls="settingsPanel">設定</button>
+    </div>
+  </div>
+</header>
+<div id="settingsScrim" class="settingsScrim" aria-hidden="true"></div>
+<section id="settingsPanel" class="settingsPanel" aria-label="募集設定" aria-hidden="true">
+  <div class="settingsGrid">
+    <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
+    <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
+    <div><label>支払方法</label><select id="bulkRate"><option value="0.9">一括払い（10%）</option><option value="0.95">分割払い（5%）</option></select></div>
+  </div>
+  <details class="settingsHelp">
+    <summary>ヘルプ</summary>
+    <div class="help">金券は入力額を差し引きます。ツアー割引20,000円は出資口数が合計3口以上のときだけ適用します。出資口数・メモ・予算・上限・金券・表示条件はこの端末のブラウザに自動保存されます。</div>
+  </details>
 </section>
-
+<div class="stickyPlanControls">
 <nav class="planTabsBar" aria-label="検討プラン">
   <div id="planTabs" class="planTabs"></div>
-  <div class="planFilter"><label>表示</label><select id="viewFilter"><option value="all">全頭</option><option value="selected">出資口数1以上</option><option value="no200">200口を除外</option></select></div>
+  <div class="planFilter"><select id="viewFilter" aria-label="表示条件"><option value="all" data-long="全頭" data-short="全頭">全頭</option><option value="selected" data-long="出資口数1以上" data-short="1口以上">出資口数1以上</option><option value="no200" data-long="200口を除外" data-short="200口除外">200口を除外</option></select></div>
 </nav>
 </div>
 <main>
@@ -177,12 +266,12 @@ h2{font-size:17px;line-height:1.3;letter-spacing:-.01em;font-weight:700;color:va
 
 <div class="planSheetBody">
 <section class="card summary">
+  <div class="kpi primary"><div class="name">支払総額</div><div id="payment" class="value">¥0</div></div>
+  <div class="kpi primary"><div class="name">今回上限残</div><div id="eventRemain" class="value">¥0</div></div>
   <div class="kpi"><div class="name">選択口数</div><div id="selectedCount" class="value">0口</div></div>
   <div class="kpi"><div class="name">支払方法割引後合計</div><div id="subtotal" class="value">¥0</div></div>
   <div class="kpi"><div class="name">金券</div><div id="voucherDisplay" class="value">¥0</div></div>
   <div class="kpi"><div class="name">ツアー割引</div><div id="tourDiscount" class="value">¥0</div></div>
-  <div class="kpi"><div class="name">支払総額</div><div id="payment" class="value">¥0</div></div>
-  <div class="kpi"><div class="name">今回上限残</div><div id="eventRemain" class="value">¥0</div></div>
 </section>
 
 <section class="cardList" id="cardList" data-recruitment-round-id="2026-current">
@@ -629,6 +718,155 @@ var RECRUITMENT_TITLE = '2026年新規1歳馬募集';
 var DEFAULT_PLAN_ID = 'default';
 var activePlanId = DEFAULT_PLAN_ID;
 
+function updateSettingsSnapshot() {
+  var budgetInput = document.getElementById('eventBudget');
+  var voucherInput = document.getElementById('voucherAmount');
+  var bulkRate = document.getElementById('bulkRate');
+  document.getElementById('eventBudgetSnapshot').textContent = yen(normalizeMoneyValue(budgetInput.value));
+  document.getElementById('voucherSnapshot').textContent = yen(normalizeMoneyValue(voucherInput.value));
+  document.getElementById('bulkRateSnapshot').textContent = bulkRate.value === '0.95' ? '分割5%' : '一括10%';
+}
+
+function setSettingsPanelOpen(isOpen) {
+  var panel = document.getElementById('settingsPanel');
+  var scrim = document.getElementById('settingsScrim');
+  var toggle = document.getElementById('settingsToggle');
+  panel.classList.toggle('isOpen', isOpen);
+  scrim.classList.toggle('isOpen', isOpen);
+  panel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+  scrim.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+  toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  if ('inert' in panel) panel.inert = !isOpen;
+  if (!isOpen && panel.contains(document.activeElement)) toggle.focus();
+}
+
+function updateResponsiveLabels() {
+  var isPhone = window.matchMedia('(max-width:430px)').matches;
+  var options = document.getElementById('viewFilter').options;
+  for (var i=0; i<options.length; i++) {
+    options[i].textContent = options[i].getAttribute(isPhone ? 'data-short' : 'data-long');
+  }
+}
+
+function autoSizeMemo(memo) {
+  if (!memo) return;
+  memo.style.height = '44px';
+  var height = Math.max(44, Math.min(112, memo.scrollHeight || 44));
+  memo.style.height = height + 'px';
+  memo.classList.toggle('isOverflowing', (memo.scrollHeight || 44) > 112);
+}
+
+function syncHorseCardExpansion(card, units, wasSelected) {
+  if (!card) return;
+  if (units > 0) {
+    card.setAttribute('data-manual-expanded', 'false');
+  } else if (wasSelected) {
+    card.setAttribute('data-manual-expanded', 'false');
+  }
+  var expanded = units > 0 || card.getAttribute('data-manual-expanded') === 'true';
+  card.classList.toggle('isCollapsed', !expanded);
+  var toggle = card.querySelector('.horseToggle');
+  var identity = card.querySelector('.horseIdentity');
+  var canToggle = units === 0;
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    toggle.setAttribute('aria-disabled', canToggle ? 'false' : 'true');
+    toggle.disabled = !canToggle;
+    toggle.title = canToggle ? (expanded ? '詳細を閉じる' : '詳細を開く') : '出資中のため折り畳めません';
+  }
+  if (identity) {
+    identity.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    identity.setAttribute('aria-disabled', canToggle ? 'false' : 'true');
+  }
+  if (expanded) autoSizeMemo(card.querySelector('.memo'));
+}
+
+function toggleHorseCard(card) {
+  if (!card) return;
+  var units = getNormalizedUnitInputValue(card.querySelector('.units'));
+  if (units > 0) return;
+  var expanded = card.getAttribute('data-manual-expanded') !== 'true';
+  card.setAttribute('data-manual-expanded', expanded ? 'true' : 'false');
+  syncHorseCardExpansion(card, units, false);
+}
+
+function ensureHorseCardTopVisible(card) {
+  var scroller = document.querySelector('main');
+  var summary = document.querySelector('.summary');
+  if (!card || !scroller || !summary) return;
+  window.requestAnimationFrame(function() {
+    var cardRect = card.getBoundingClientRect();
+    var summaryRect = summary.getBoundingClientRect();
+    var visibleTop = Math.max(scroller.getBoundingClientRect().top, summaryRect.bottom) + 8;
+    if (cardRect.top < visibleTop) scroller.scrollTop += cardRect.top - visibleTop;
+  });
+}
+
+function setupHorseCards() {
+  var cards = document.querySelectorAll('.horseCard');
+  for (var i=0; i<cards.length; i++) {
+    var card = cards[i];
+    var top = card.querySelector('.cardTop');
+    var identity = top.firstElementChild;
+    var inputLine = card.querySelector('.inputLine');
+    var amounts = card.querySelector('.amounts');
+    var meta = card.querySelector('.meta');
+    var memoLabel = card.querySelector('.memoLabel');
+    var oldMemo = card.querySelector('.memo');
+    var memo = document.createElement('textarea');
+    var memoId = 'memo-' + card.getAttribute('data-no');
+    memo.className = oldMemo.className;
+    memo.value = oldMemo.value;
+    memo.rows = 1;
+    memo.id = memoId;
+    memoLabel.setAttribute('for', memoId);
+    oldMemo.parentNode.replaceChild(memo, oldMemo);
+
+    identity.classList.add('horseIdentity');
+    identity.setAttribute('role', 'button');
+    identity.setAttribute('tabindex', '0');
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'horseToggle';
+    toggle.textContent = '⌄';
+    toggle.setAttribute('aria-label', '馬カードの詳細を開閉');
+    toggle.setAttribute('aria-controls', 'horse-details-' + card.getAttribute('data-no'));
+    identity.setAttribute('aria-controls', 'horse-details-' + card.getAttribute('data-no'));
+    top.appendChild(toggle);
+
+    var controlsRow = document.createElement('div');
+    controlsRow.className = 'horseControlsRow';
+    card.insertBefore(controlsRow, inputLine);
+    controlsRow.appendChild(inputLine);
+    controlsRow.appendChild(amounts);
+
+    var details = document.createElement('div');
+    details.className = 'horseDetails';
+    details.id = 'horse-details-' + card.getAttribute('data-no');
+    card.insertBefore(details, meta);
+    details.appendChild(meta);
+    var memoField = document.createElement('div');
+    memoField.className = 'memoField';
+    details.appendChild(memoField);
+    memoField.appendChild(memoLabel);
+    memoField.appendChild(memo);
+
+    card.setAttribute('data-manual-expanded', 'false');
+    identity.onclick = function() { toggleHorseCard(this.closest('.horseCard')); };
+    identity.onkeydown = function(event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleHorseCard(this.closest('.horseCard'));
+      }
+    };
+    toggle.onclick = function(event) {
+      event.stopPropagation();
+      toggleHorseCard(this.closest('.horseCard'));
+    };
+    syncHorseCardExpansion(card, getNormalizedUnitInputValue(card.querySelector('.units')), card.classList.contains('selected'));
+  }
+}
+
 function getRecruitmentRoundElements() {
   return document.querySelectorAll('[data-recruitment-round-id]');
 }
@@ -709,12 +947,15 @@ function wireMoneyInput(id) {
   };
   input.onblur = function() {
     formatMoneyInputValue(id);
+    updateSettingsSnapshot();
   };
   input.oninput = function() {
     recalc();
     saveState();
+    updateSettingsSnapshot();
   };
   formatMoneyInputValue(id);
+  updateSettingsSnapshot();
 }
 
 function getHorseEntries(cards) {
@@ -929,6 +1170,7 @@ function applyRecruitmentRoundSettings(data, plan) {
   document.getElementById('voucherAmount').value = settings.voucherAmount || '';
   formatMoneyInputValue('eventBudget');
   formatMoneyInputValue('voucherAmount');
+  updateSettingsSnapshot();
 }
 
 function getPlanViewFilter(data, plan) {
@@ -946,6 +1188,8 @@ function applyPlan(plan, data) {
     var memoInput = cards[i].querySelector('.memo');
     unitsInput.value = savedHorses && savedHorses[no] && savedHorses[no].units != null ? savedHorses[no].units : 0;
     memoInput.value = savedHorses && savedHorses[no] && savedHorses[no].memo != null ? savedHorses[no].memo : '';
+    cards[i].setAttribute('data-manual-expanded', 'false');
+    autoSizeMemo(memoInput);
   }
 }
 
@@ -1217,6 +1461,20 @@ function getPaymentRate() {
   return 0.9;
 }
 
+function updateKpiValue(id, value) {
+  var output = document.getElementById(id);
+  if (output.textContent === value) return;
+  output.textContent = value;
+  var kpi = output.closest('.kpi');
+  kpi.classList.remove('isUpdated');
+  void kpi.offsetWidth;
+  kpi.classList.add('isUpdated');
+  window.clearTimeout(kpi._updateTimer);
+  kpi._updateTimer = window.setTimeout(function() {
+    kpi.classList.remove('isUpdated');
+  }, 560);
+}
+
 function recalc() {
   var rate = getPaymentRate();
   var eventBudget = parseMoneyInput('eventBudget');
@@ -1227,6 +1485,7 @@ function recalc() {
 
   for (var i=0; i<cards.length; i++) {
     var inp = cards[i].querySelector('.units');
+    var wasSelected = cards[i].classList.contains('selected');
     var total = Number(inp.getAttribute('data-total')) || 0;
     var shares = Number(inp.getAttribute('data-shares')) || 1;
     var units = getNormalizedUnitInputValue(inp);
@@ -1241,6 +1500,7 @@ function recalc() {
     } else {
       cards[i].classList.remove('selected');
     }
+    syncHorseCardExpansion(cards[i], units, wasSelected);
 
     unitTotal += units;
     subtotal += discounted;
@@ -1249,12 +1509,12 @@ function recalc() {
   var tourDiscount = unitTotal >= 3 ? 20000 : 0;
   var payment = subtotal > 0 ? Math.max(0, subtotal - voucher - tourDiscount) : 0;
 
-  document.getElementById('selectedCount').textContent = unitTotal + '口';
-  document.getElementById('subtotal').textContent = yen(subtotal);
-  document.getElementById('voucherDisplay').textContent = voucher > 0 ? '-' + yen(voucher) : yen(0);
-  document.getElementById('tourDiscount').textContent = tourDiscount > 0 ? '-' + yen(tourDiscount) : yen(0);
-  document.getElementById('payment').textContent = yen(payment);
-  document.getElementById('eventRemain').textContent = yen(eventBudget - payment);
+  updateKpiValue('selectedCount', unitTotal + '口');
+  updateKpiValue('subtotal', yen(subtotal));
+  updateKpiValue('voucherDisplay', voucher > 0 ? '-' + yen(voucher) : yen(0));
+  updateKpiValue('tourDiscount', tourDiscount > 0 ? '-' + yen(tourDiscount) : yen(0));
+  updateKpiValue('payment', yen(payment));
+  updateKpiValue('eventRemain', yen(eventBudget - payment));
 
   var paymentKpi = document.getElementById('payment').closest('.kpi');
   var remainKpi = document.getElementById('eventRemain').closest('.kpi');
@@ -1303,8 +1563,11 @@ function wireEvents() {
     controls.appendChild(plusButton);
 
     input.oninput = function() {
+      var card = this.closest('.horseCard');
+      var wasCollapsed = card.classList.contains('isCollapsed');
       recalc();
       saveState();
+      if (wasCollapsed && getNormalizedUnitInputValue(this) > 0) ensureHorseCardTopVisible(card);
     };
 
     minusButton.onclick = function() {
@@ -1328,12 +1591,16 @@ function wireEvents() {
 
   var memoInputs = document.querySelectorAll('.memo');
   for (var j=0; j<memoInputs.length; j++) {
-    memoInputs[j].oninput = saveState;
+    memoInputs[j].oninput = function() {
+      autoSizeMemo(this);
+      saveState();
+    };
   }
 
   document.getElementById('bulkRate').onchange = function() {
     recalc();
     saveState();
+    updateSettingsSnapshot();
   };
   wireMoneyInput('eventBudget');
   wireMoneyInput('voucherAmount');
@@ -1357,16 +1624,35 @@ function wireEvents() {
     hidePlanContextMenu();
     deletePlan(planId);
   };
+  document.getElementById('settingsToggle').onclick = function() {
+    setSettingsPanelOpen(this.getAttribute('aria-expanded') !== 'true');
+  };
+  document.getElementById('settingsScrim').onclick = function() {
+    setSettingsPanelOpen(false);
+  };
   document.addEventListener('click', function(event) {
     var menu = document.getElementById('planContextMenu');
     if (menu && !menu.classList.contains('hidden') && !menu.contains(event.target)) hidePlanContextMenu();
+    var panel = document.getElementById('settingsPanel');
+    var toggle = document.getElementById('settingsToggle');
+    var keypad = document.getElementById('numericKeypad');
+    if (panel.classList.contains('isOpen') && !panel.contains(event.target) && !toggle.contains(event.target) && !keypad.contains(event.target)) {
+      setSettingsPanelOpen(false);
+    }
   });
   document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') hidePlanContextMenu();
+    if (event.key === 'Escape') {
+      hidePlanContextMenu();
+      setSettingsPanelOpen(false);
+    }
   });
+  window.addEventListener('resize', updateResponsiveLabels);
 }
 
 document.getElementById('recruitmentTitle').textContent = RECRUITMENT_TITLE;
+setupHorseCards();
+updateResponsiveLabels();
+setSettingsPanelOpen(false);
 loadState();
 setupNativeKeyboardSuppression();
 setupNumericKeypad();
