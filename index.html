@@ -998,16 +998,24 @@ function getPlanName() {
   return 'プラン1';
 }
 
-function getPlanData() {
+function captureActivePlanState(savedPlan) {
   var round = getCurrentRecruitmentRound();
   var cards = getRecruitmentRoundCards(round);
-  var horses = getHorseEntries(cards);
-  return {
+  var capturedHorses = getHorseEntries(cards);
+  var savedHorses = savedPlan && savedPlan.horseSelections && typeof savedPlan.horseSelections === 'object'
+    ? savedPlan.horseSelections : {};
+  var horses = Object.assign({}, savedHorses);
+  Object.keys(capturedHorses).forEach(function(no) {
+    var savedSelection = savedHorses[no] && typeof savedHorses[no] === 'object'
+      ? savedHorses[no] : {};
+    horses[no] = Object.assign({}, savedSelection, capturedHorses[no]);
+  });
+  return Object.assign({}, savedPlan || {}, {
     id: activePlanId,
-    name: getPlanName(),
+    name: savedPlan && savedPlan.name ? savedPlan.name : getPlanName(),
     viewFilter: document.getElementById('viewFilter').value,
     horseSelections: horses
-  };
+  });
 }
 
 
@@ -1018,7 +1026,7 @@ function getRecruitmentRoundSettings(data) {
   return { eventBudget: '', bulkRate: '0.9', voucherAmount: '' };
 }
 
-function getRecruitmentRoundSettingsData() {
+function captureRecruitmentRoundSettings() {
   return {
     eventBudget: getNormalizedMoneyInputValue('eventBudget'),
     bulkRate: document.getElementById('bulkRate').value,
@@ -1030,24 +1038,32 @@ function getSaveData() {
   var existing = readStoredData();
   var round = getCurrentRecruitmentRound();
   var savedRound = existing.recruitmentRounds[round.id];
-  var plans = savedRound ? savedRound.plans : [];
-  var currentPlan = getPlanData();
-  var replaced = false;
+  var plans = savedRound && Array.isArray(savedRound.plans) ? savedRound.plans.slice() : [];
+  var savedPlan = null;
   for (var i=0; i<plans.length; i++) {
-    if (plans[i].id === activePlanId) {
-      plans[i] = currentPlan;
+    if (plans[i].id === activePlanId) savedPlan = plans[i];
+  }
+  var currentPlan = captureActivePlanState(savedPlan);
+  var replaced = false;
+  for (var j=0; j<plans.length; j++) {
+    if (plans[j].id === activePlanId) {
+      plans[j] = currentPlan;
       replaced = true;
     }
   }
   if (!replaced) plans.push(currentPlan);
   existing.schemaVersion = 4;
   existing.activeRecruitmentRoundId = round.id;
-  existing.recruitmentRounds[round.id] = {
+  existing.recruitmentRounds[round.id] = Object.assign({}, savedRound || {}, {
     id: round.id,
-    settings: getRecruitmentRoundSettingsData(),
+    settings: Object.assign(
+      {},
+      savedRound && savedRound.settings ? savedRound.settings : {},
+      captureRecruitmentRoundSettings()
+    ),
     activePlanId: activePlanId,
     plans: plans
-  };
+  });
   return existing;
 }
 
@@ -1186,8 +1202,8 @@ function showPlanContextMenu(x, y, planId) {
 }
 
 
-function applyRecruitmentRoundSettings(data, plan) {
-  var settings = getRecruitmentRoundSettings(data || {}, plan);
+function applyRecruitmentRoundSettings(data) {
+  var settings = getRecruitmentRoundSettings(data || {});
   document.getElementById('eventBudget').value = settings.eventBudget || '';
   document.getElementById('bulkRate').value = settings.bulkRate || '0.9';
   document.getElementById('voucherAmount').value = settings.voucherAmount || '';
@@ -1196,14 +1212,14 @@ function applyRecruitmentRoundSettings(data, plan) {
   updateSettingsSnapshot();
 }
 
-function getPlanViewFilter(data, plan) {
+function getPlanViewFilter(plan) {
   return plan && plan.viewFilter != null ? plan.viewFilter : 'all';
 }
 
-function applyPlan(plan, data) {
+function applyPlan(plan) {
   var round = getCurrentRecruitmentRound();
   var savedHorses = getSavedHorsesForRound(plan);
-  document.getElementById('viewFilter').value = getPlanViewFilter(data || {}, plan);
+  document.getElementById('viewFilter').value = getPlanViewFilter(plan);
   var cards = getRecruitmentRoundCards(round);
   for (var i=0; i<cards.length; i++) {
     var no = cards[i].getAttribute('data-no');
@@ -1228,9 +1244,9 @@ function loadState() {
     if (plans[i].id === activePlanId) activePlan = plans[i];
   }
   activePlanId = activePlan.id;
-  applyRecruitmentRoundSettings(data, activePlan);
+  applyRecruitmentRoundSettings(data);
   renderPlanTabs(plans);
-  applyPlan(activePlan, data);
+  applyPlan(activePlan);
 }
 
 function switchPlan(planId) {
@@ -1242,7 +1258,7 @@ function switchPlan(planId) {
       activePlanId = planId;
       savePlansForCurrentRound(data, plans);
       renderPlanTabs(plans);
-      applyPlan(plans[i], data);
+      applyPlan(plans[i]);
       applyFilter();
       return;
     }
@@ -1261,7 +1277,7 @@ function addPlan() {
   activePlanId = newId;
   savePlansForCurrentRound(data, plans);
   renderPlanTabs(plans);
-  applyPlan(newPlan, data);
+  applyPlan(newPlan);
   applyFilter();
 }
 
@@ -1303,7 +1319,7 @@ function duplicatePlan(planId) {
   activePlanId = newPlan.id;
   savePlansForCurrentRound(data, plans);
   renderPlanTabs(plans);
-  applyPlan(newPlan, data);
+  applyPlan(newPlan);
   applyFilter();
 }
 
@@ -1340,7 +1356,7 @@ function deletePlan(planId) {
   for (var i=0; i<plans.length; i++) {
     if (plans[i].id === activePlanId) activePlan = plans[i];
   }
-  applyPlan(activePlan, data);
+  applyPlan(activePlan);
   applyFilter();
 }
 
