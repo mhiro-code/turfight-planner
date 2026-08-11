@@ -145,11 +145,13 @@ test('one catalog root and a DOM root without an ID use the documented fallback 
 });
 
 test('a storage read failure leaves the current round selected and performs no write or switch', () => {
-  const { context, roots, writes } = createHarness({}, { storageGetError: new Error('read denied') });
+  const { context, roots, writes, elements } = createHarness({}, { storageGetError: new Error('read denied') });
   context.setActiveRecruitmentRoundId('round-old');
+  elements.recruitmentRoundSelector.value = 'round-new';
 
   assert.equal(context.selectRecruitmentRound('round-new'), false);
   assert.equal(context.getCurrentRecruitmentRound().id, 'round-old');
   assert.deepEqual(roots.map(root => root.hidden), [false, true]);
+  assert.equal(elements.recruitmentRoundSelector.value, 'round-old');
   assert.equal(writes.length, 0);
 });

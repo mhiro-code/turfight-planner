@@ -1291,7 +1291,11 @@ function loadState() {
 
 function selectRecruitmentRound(roundId) {
   if (roundId === activeRecruitmentRoundId) return true;
-  if (!saveState()) return false;
+  if (!saveState()) {
+    var selector = document.getElementById('recruitmentRoundSelector');
+    if (selector) selector.value = activeRecruitmentRoundId;
+    return false;
+  }
   var data = readStoredData();
   setActiveRecruitmentRoundId(roundId);
   var plans = getPlans(data);
