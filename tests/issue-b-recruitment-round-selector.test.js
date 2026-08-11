@@ -155,3 +155,8 @@ test('a storage read failure leaves the current round selected and performs no w
   assert.equal(elements.recruitmentRoundSelector.value, 'round-old');
   assert.equal(writes.length, 0);
 });
+
+test('non-selected card-list roots have an author CSS rule that honors the hidden attribute', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+  assert.match(html, /\.cardList\[hidden\]\{display:none!important\}/);
+});
