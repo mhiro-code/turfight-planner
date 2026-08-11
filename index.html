@@ -37,6 +37,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe 
 .headerIdentity{display:flex;align-items:baseline;gap:12px;min-width:0;flex:1}
 h1{font-size:19px;line-height:1.2;letter-spacing:-.02em;font-weight:700;margin:0;white-space:nowrap}
 .recruitmentTitle{font-size:15px;line-height:1.25;letter-spacing:-.01em;font-weight:650;color:rgba(255,255,255,.76);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recruitmentRoundSelector{max-width:210px;min-height:34px;padding:4px 28px 4px 8px;border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.12);color:#fff;font-size:13px;font-weight:650}
 .settingsSnapshot{display:flex;align-items:center;gap:12px;flex:0 0 auto}
 .settingSnapshot{min-width:72px;text-align:right}
 .settingSnapshot span{display:block;font-size:10px;line-height:1.1;color:rgba(255,255,255,.62);white-space:nowrap}
@@ -236,6 +237,7 @@ h2{font-size:17px;line-height:1.3;letter-spacing:-.01em;font-weight:700;color:va
     <div class="headerIdentity">
       <h1>Turfight Planner</h1>
       <div id="recruitmentTitle" class="recruitmentTitle"></div>
+      <select id="recruitmentRoundSelector" class="recruitmentRoundSelector" aria-label="募集回を選択"></select>
     </div>
     <div class="settingsSnapshot" aria-label="募集設定">
       <div class="settingSnapshot"><span>今回上限</span><b id="eventBudgetSnapshot">¥0</b></div>
@@ -903,8 +905,45 @@ function yen(n) {
   return '¥' + n.toLocaleString('ja-JP');
 }
 
+var activeRecruitmentRoundId = '';
+
 function getCurrentRecruitmentRound() {
-  return getRecruitmentRounds()[0];
+  var rounds = getRecruitmentRounds();
+  for (var i=0; i<rounds.length; i++) {
+    if (rounds[i].id === activeRecruitmentRoundId) return rounds[i];
+  }
+  return rounds[0];
+}
+
+function setActiveRecruitmentRoundId(roundId) {
+  var rounds = getRecruitmentRounds();
+  var selected = null;
+  for (var i=0; i<rounds.length; i++) {
+    if (rounds[i].id === roundId) selected = rounds[i];
+  }
+  selected = selected || rounds[0];
+  activeRecruitmentRoundId = selected.id;
+  for (var j=0; j<rounds.length; j++) {
+    if (rounds[j].root && rounds[j].root !== document) rounds[j].root.hidden = rounds[j].id !== activeRecruitmentRoundId;
+  }
+  var selector = document.getElementById('recruitmentRoundSelector');
+  if (selector) selector.value = activeRecruitmentRoundId;
+  return selected;
+}
+
+function renderRecruitmentRoundSelector() {
+  var selector = document.getElementById('recruitmentRoundSelector');
+  if (!selector) return;
+  var rounds = getRecruitmentRounds();
+  selector.innerHTML = '';
+  for (var i=0; i<rounds.length; i++) {
+    var option = document.createElement('option');
+    option.value = rounds[i].id;
+    option.textContent = rounds[i].name;
+    selector.appendChild(option);
+  }
+  selector.hidden = rounds.length < 2;
+  selector.value = activeRecruitmentRoundId || rounds[0].id;
 }
 
 function getRecruitmentRoundCards(round) {
@@ -1235,6 +1274,7 @@ function applyPlan(plan) {
 
 function loadState() {
   var data = readStoredData();
+  setActiveRecruitmentRoundId(data.activeRecruitmentRoundId);
   var plans = getPlans(data);
   var round = getCurrentRecruitmentRound();
   var savedRound = data.recruitmentRounds[round.id];
@@ -1247,6 +1287,27 @@ function loadState() {
   applyRecruitmentRoundSettings(data);
   renderPlanTabs(plans);
   applyPlan(activePlan);
+}
+
+function selectRecruitmentRound(roundId) {
+  if (roundId === activeRecruitmentRoundId) return true;
+  if (!saveState()) return false;
+  var data = readStoredData();
+  setActiveRecruitmentRoundId(roundId);
+  var plans = getPlans(data);
+  var round = getCurrentRecruitmentRound();
+  var savedRound = data.recruitmentRounds[round.id];
+  activePlanId = savedRound && savedRound.activePlanId || plans[0].id;
+  var activePlan = plans[0];
+  for (var i=0; i<plans.length; i++) {
+    if (plans[i].id === activePlanId) activePlan = plans[i];
+  }
+  activePlanId = activePlan.id;
+  applyRecruitmentRoundSettings(data);
+  renderPlanTabs(plans);
+  applyPlan(activePlan);
+  applyFilter();
+  return true;
 }
 
 function switchPlan(planId) {
@@ -1648,6 +1709,9 @@ function wireEvents() {
     applyFilter();
     saveState();
   };
+  document.getElementById('recruitmentRoundSelector').onchange = function() {
+    selectRecruitmentRound(this.value);
+  };
   document.getElementById('contextRenamePlan').onclick = function() {
     var planId = document.getElementById('planContextMenu').getAttribute('data-plan-id');
     hidePlanContextMenu();
@@ -1696,6 +1760,7 @@ document.getElementById('recruitmentTitle').textContent = RECRUITMENT_TITLE;
 setupHorseCards();
 updateResponsiveLabels();
 setSettingsPanelOpen(false);
+renderRecruitmentRoundSelector();
 loadState();
 setupNativeKeyboardSuppression();
 setupNumericKeypad();
