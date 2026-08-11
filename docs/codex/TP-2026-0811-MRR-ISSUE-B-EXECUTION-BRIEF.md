@@ -69,7 +69,8 @@
 - Gate 1: 完了（GitHub基準確認・隔離作業場所）
 - Gate 2: 完了（OSS調査・設計承認）
 - ローカル実装／独立検証: 完了（ナイチンゲール `PASS`、自動テスト・PC/iPad相当UI確認済み）
+- レビュー: Standards `PASS`。SpecのP2指摘（保存失敗時のセレクター表示不整合）を修正し、追加テストとナイチンゲール再検証 `PASS`。
 - Gate 3承認: 2026-08-11、オーナーが `承認`。本ブランチのcommit・push・Draft PR作成を承認済み。
-- Gate 3実行: 完了。commit `af387ba`、originへのpush、Draft PR #97作成済み。
+- Gate 3実行: 完了。初回commit `af387ba`、修正commit `e87ac39`、originへのpush、Draft PR #97作成済み。
 - Draft PR: https://github.com/mhiro-code/turfight-planner/pull/97
 - Ready化、merge、release: 未承認・未実施（別ゲート）。
