@@ -36,8 +36,8 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe 
 .appHeaderInner{width:100%;max-width:920px;margin:0 auto;display:flex;align-items:center;gap:16px;min-width:0}
 .headerIdentity{display:flex;align-items:baseline;gap:12px;min-width:0;flex:1}
 h1{font-size:19px;line-height:1.2;letter-spacing:-.02em;font-weight:700;margin:0;white-space:nowrap}
-.recruitmentTitle{font-size:15px;line-height:1.25;letter-spacing:-.01em;font-weight:650;color:rgba(255,255,255,.76);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.recruitmentRoundSelector{max-width:210px;min-height:34px;padding:4px 28px 4px 8px;border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.12);color:#fff;font-size:13px;font-weight:650}
+.recruitmentRoundSelector{width:300px;max-width:calc(100vw - 170px);min-width:0;min-height:34px;padding:4px 28px 4px 8px;border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.12);color:#fff;font-size:13px;font-weight:650}
+.recruitmentRoundSelector option{background:#fff;color:#1c1c1e}
 .settingsSnapshot{display:flex;align-items:center;gap:12px;flex:0 0 auto}
 .settingSnapshot{min-width:72px;text-align:right}
 .settingSnapshot span{display:block;font-size:10px;line-height:1.1;color:rgba(255,255,255,.62);white-space:nowrap}
@@ -204,7 +204,6 @@ h2{font-size:17px;line-height:1.3;letter-spacing:-.01em;font-weight:700;color:va
   .appHeaderInner{display:grid;grid-template-rows:1fr 1fr;gap:4px}
   .headerIdentity{width:100%;justify-content:space-between;gap:6px}
   h1{font-size:13px}
-  .recruitmentTitle{font-size:12px;text-align:right}
   .settingsSnapshot{width:100%;display:grid;grid-template-columns:1fr 1fr .85fr auto;gap:4px}
   .settingSnapshot{min-width:0;text-align:left}
   .settingSnapshot span{font-size:9px}
@@ -238,7 +237,6 @@ h2{font-size:17px;line-height:1.3;letter-spacing:-.01em;font-weight:700;color:va
   <div class="appHeaderInner">
     <div class="headerIdentity">
       <h1>Turfight Planner</h1>
-      <div id="recruitmentTitle" class="recruitmentTitle"></div>
       <select id="recruitmentRoundSelector" class="recruitmentRoundSelector" aria-label="募集回を選択"></select>
     </div>
     <div class="settingsSnapshot" aria-label="募集設定">
@@ -1219,7 +1217,6 @@ h2{font-size:17px;line-height:1.3;letter-spacing:-.01em;font-weight:700;color:va
 <script>
 var STORAGE_KEY = 'hitokuchiPlanner.card.v5.fixed';
 var BACKUP_STORAGE_KEY = STORAGE_KEY + '.backup.v3';
-var RECRUITMENT_TITLE = '2026年新規1歳馬募集';
 var DEFAULT_PLAN_ID = 'default';
 var activePlanId = DEFAULT_PLAN_ID;
 
@@ -2257,7 +2254,6 @@ function wireEvents() {
   });
 }
 
-document.getElementById('recruitmentTitle').textContent = RECRUITMENT_TITLE;
 setupHorseCards();
 updateResponsiveLabels();
 setSettingsPanelOpen(false);

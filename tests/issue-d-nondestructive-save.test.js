@@ -83,10 +83,7 @@ function createHarness(storedData, options = {}) {
   const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
   const inlineScript = html.match(/<script>\s*([\s\S]*?)<\/script>/);
   assert.ok(inlineScript, 'index.html inline script should exist');
-  const definitionsOnly = inlineScript[1].replace(
-    /\ndocument\.getElementById\('recruitmentTitle'\)[\s\S]*$/,
-    '\n'
-  );
+  const definitionsOnly = inlineScript[1].split("setupHorseCards();")[0];
   const context = vm.createContext({
     console,
     document,
