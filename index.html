@@ -27,6 +27,8 @@ main{padding:12px;max-width:920px;margin:auto}
 .planContextMenu button{display:block;width:100%;margin:0;padding:8px 10px;border-radius:7px;background:transparent;color:#222;text-align:left;font-weight:normal}
 .planContextMenu button:hover{background:#eee7cf}
 .planContextMenu button:disabled{color:#aaa;background:transparent}
+.recruitmentRoundBar{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px}
+.recruitmentRoundBar label{margin:0;white-space:nowrap}
 label{display:block;font-size:12px;color:#666;margin-bottom:4px}
 input,select,button{font:inherit;padding:8px;border:1px solid #ddd5b8;border-radius:9px;background:white}
 input,select{width:100%;box-sizing:border-box}
@@ -54,6 +56,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 .meta div,.amounts div{background:#faf7e8;border:1px solid #eee3c1;border-radius:10px;padding:8px;min-width:0}
 .meta span,.amounts span{display:block;font-size:11px;color:#666;margin-bottom:2px}
 .meta b,.amounts b{font-size:14px;word-break:break-word}
+.pedigree{font-size:12px;color:#666;margin-top:-4px}
 .inputLine{display:grid;grid-template-columns:1fr 132px;gap:8px;align-items:end;margin-top:8px}
 .unitControls{display:grid;grid-template-columns:34px 1fr 34px;gap:4px}
 .unitButton{padding:8px 0}
@@ -94,6 +97,11 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
   <button type="button" id="contextDeletePlan" role="menuitem">削除</button>
 </div>
 
+<section class="card recruitmentRoundBar">
+  <label for="recruitmentRoundSelect">募集回</label>
+  <select id="recruitmentRoundSelect" aria-label="募集回"></select>
+</section>
+
 <section class="card grid">
   <div><label>今回上限</label><input id="eventBudget" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
   <div><label>金券</label><input id="voucherAmount" type="text" inputmode="numeric" pattern="[0-9]*" value=""></div>
@@ -115,7 +123,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
   <div class="help">金券は入力額を差し引きます。ツアー割引20,000円は出資口数が合計3口以上のときだけ適用します。出資口数・メモ・予算・上限・金券・表示条件はこの端末のブラウザに自動保存されます。</div>
 </section>
 
-<section class="cardList" id="cardList" data-recruitment-round-id="2026-current">
+<section class="cardList" id="cardList" data-recruitment-round-id="2026-current" data-recruitment-round-name="2026年1歳馬募集（Impress-15～27）">
 
 <article class="horseCard" data-row="horse" data-shares="1000" data-no="15">
   <div class="cardTop">
@@ -547,6 +555,501 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 </article>
 
 </section>
+
+<section class="cardList hidden" data-recruitment-round-id="2026-joyful" data-recruitment-round-name="2026年新規当歳馬募集（Joyful-1～14）">
+
+<article class="horseCard" data-row="horse" data-shares="1000" data-no="1">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-1 · 牡・当歳</div>
+      <h2>キタサンブラック × *シーII</h2>
+      <div class="pedigree">母父：War Front</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牡・当歳</span>
+      <span class="badge">関西</span>
+      <span class="badge s1000">1,000口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>吉岡辰弥</b></div>
+    <div><span>牧場</span><b>谷川牧場</b></div>
+    <div><span>募集総額</span><b>¥80,000,000</b></div>
+    <div><span>一口金額</span><b>¥80,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="80000000" data-shares="1000">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="1000" data-no="2">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-2 · 牡・当歳</div>
+      <h2>サートゥルナーリア × ファンディーナ</h2>
+      <div class="pedigree">母父：ディープインパクト</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牡・当歳</span>
+      <span class="badge">関西</span>
+      <span class="badge s1000">1,000口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>高野友和</b></div>
+    <div><span>牧場</span><b>谷川牧場</b></div>
+    <div><span>募集総額</span><b>¥40,000,000</b></div>
+    <div><span>一口金額</span><b>¥40,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="40000000" data-shares="1000">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="1000" data-no="3">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-3 · 牝・当歳</div>
+      <h2>タイトルホルダー × *ヴィーヴィーグッドナイト</h2>
+      <div class="pedigree">母父：Midnight Lute</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牝・当歳</span>
+      <span class="badge">関西</span>
+      <span class="badge s1000">1,000口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>小林真也</b></div>
+    <div><span>牧場</span><b>高昭牧場</b></div>
+    <div><span>募集総額</span><b>¥23,000,000</b></div>
+    <div><span>一口金額</span><b>¥23,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="23000000" data-shares="1000">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="1000" data-no="4">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-4 · 牝・当歳</div>
+      <h2>*シニスターミニスター × ボリード</h2>
+      <div class="pedigree">母父：ディープインパクト</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牝・当歳</span>
+      <span class="badge">関西</span>
+      <span class="badge s1000">1,000口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>井上智史</b></div>
+    <div><span>牧場</span><b>高昭牧場</b></div>
+    <div><span>募集総額</span><b>¥27,000,000</b></div>
+    <div><span>一口金額</span><b>¥27,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="27000000" data-shares="1000">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="400" data-no="5">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-5 · 牡・当歳</div>
+      <h2>*パールシークレット × アシェット</h2>
+      <div class="pedigree">母父：アドマイヤムーン</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牡・当歳</span>
+      <span class="badge">関西</span>
+      <span class="badge s400">400口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>高橋義忠</b></div>
+    <div><span>牧場</span><b>大狩部牧場</b></div>
+    <div><span>募集総額</span><b>¥22,000,000</b></div>
+    <div><span>一口金額</span><b>¥55,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="22000000" data-shares="400">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="400" data-no="6">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-6 · 牡・当歳</div>
+      <h2>*パールシークレット × シンギュラチャーム</h2>
+      <div class="pedigree">母父：*ハービンジャー</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牡・当歳</span>
+      <span class="badge">関西</span>
+      <span class="badge s400">400口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>井上智史</b></div>
+    <div><span>牧場</span><b>大狩部牧場</b></div>
+    <div><span>募集総額</span><b>¥20,000,000</b></div>
+    <div><span>一口金額</span><b>¥50,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="20000000" data-shares="400">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="400" data-no="7">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-7 · 牝・当歳</div>
+      <h2>*レモンポップ × マルモマリア</h2>
+      <div class="pedigree">母父：*ヨハネスブルグ</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牝・当歳</span>
+      <span class="badge">関西</span>
+      <span class="badge s400">400口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>宮地貴稔</b></div>
+    <div><span>牧場</span><b>田中スタッド</b></div>
+    <div><span>募集総額</span><b>¥16,000,000</b></div>
+    <div><span>一口金額</span><b>¥40,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="16000000" data-shares="400">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="400" data-no="8">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-8 · 牝・当歳</div>
+      <h2>*シスキン × *ロゼヤ</h2>
+      <div class="pedigree">母父：Invincible Spirit</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牝・当歳</span>
+      <span class="badge">関西</span>
+      <span class="badge s400">400口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>中村直也</b></div>
+    <div><span>牧場</span><b>丸幸小林牧場</b></div>
+    <div><span>募集総額</span><b>¥20,000,000</b></div>
+    <div><span>一口金額</span><b>¥50,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="20000000" data-shares="400">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="400" data-no="9">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-9 · 牡・当歳</div>
+      <h2>*パールシークレット × アッシュケーク</h2>
+      <div class="pedigree">母父：*タイキシャトル</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牡・当歳</span>
+      <span class="badge">関東</span>
+      <span class="badge s400">400口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>相沢郁</b></div>
+    <div><span>牧場</span><b>大狩部牧場</b></div>
+    <div><span>募集総額</span><b>¥20,000,000</b></div>
+    <div><span>一口金額</span><b>¥50,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="20000000" data-shares="400">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="400" data-no="10">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-10 · 牝・当歳</div>
+      <h2>エフフォーリア × ピエールドリュヌ</h2>
+      <div class="pedigree">母父：キングカメハメハ</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牝・当歳</span>
+      <span class="badge">関東</span>
+      <span class="badge s400">400口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>浅利英明</b></div>
+    <div><span>牧場</span><b>高村牧場</b></div>
+    <div><span>募集総額</span><b>¥30,000,000</b></div>
+    <div><span>一口金額</span><b>¥75,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="30000000" data-shares="400">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="200" data-no="11">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-11 · 牝・当歳</div>
+      <h2>ルヴァンスレーヴ × エミーズレシピ</h2>
+      <div class="pedigree">母父：*エンパイアメーカー</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牝・当歳</span>
+      <span class="badge">関西</span>
+      <span class="badge s200">200口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>奥村豊</b></div>
+    <div><span>牧場</span><b>高村牧場</b></div>
+    <div><span>募集総額</span><b>¥14,000,000</b></div>
+    <div><span>一口金額</span><b>¥70,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="14000000" data-shares="200">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="200" data-no="12">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-12 · 牡・当歳</div>
+      <h2>チュウワウィザード × チャンダナ</h2>
+      <div class="pedigree">母父：*スウェプトオーヴァーボード</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牡・当歳</span>
+      <span class="badge">関東</span>
+      <span class="badge s200">200口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>尾関知人</b></div>
+    <div><span>牧場</span><b>ナカノファーム</b></div>
+    <div><span>募集総額</span><b>¥12,000,000</b></div>
+    <div><span>一口金額</span><b>¥60,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="12000000" data-shares="200">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="200" data-no="13">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-13 · 牡・当歳</div>
+      <h2>ゴールドドリーム × リコルド</h2>
+      <div class="pedigree">母父：リオンディーズ</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牡・当歳</span>
+      <span class="badge">関東</span>
+      <span class="badge s200">200口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>未定（新規開業）</b></div>
+    <div><span>牧場</span><b>中島牧場</b></div>
+    <div><span>募集総額</span><b>¥14,000,000</b></div>
+    <div><span>一口金額</span><b>¥70,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="14000000" data-shares="200">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+<article class="horseCard" data-row="horse" data-shares="200" data-no="14">
+  <div class="cardTop">
+    <div>
+      <div class="no">Joyful-14 · 牝・当歳</div>
+      <h2>ダノンプレミアム × ブランダルジャン</h2>
+      <div class="pedigree">母父：ゼンノロブロイ</div>
+    </div>
+    <div class="badges">
+      <span class="badge">牝・当歳</span>
+      <span class="badge">関東</span>
+      <span class="badge s200">200口</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div><span>厩舎</span><b>矢野英一</b></div>
+    <div><span>牧場</span><b>中島牧場</b></div>
+    <div><span>募集総額</span><b>¥10,000,000</b></div>
+    <div><span>一口金額</span><b>¥50,000</b></div>
+  </div>
+
+  <div class="inputLine">
+    <label>出資口数</label>
+    <input class="units" type="number" value="0" min="0" data-total="10000000" data-shares="200">
+  </div>
+
+  <div class="amounts">
+    <div><span>出資金額</span><b class="gross">¥0</b></div>
+    <div><span>支払方法割引後</span><b class="discounted">¥0</b></div>
+  </div>
+
+  <label class="memoLabel">メモ</label>
+  <input class="memo" value="">
+</article>
+
+</section>
+
 </main>
 <div id="numericKeypad" class="numericKeypad hidden" aria-label="数値入力テンキー"></div>
 
@@ -554,6 +1057,7 @@ h2{font-size:17px;margin:2px 0 8px;line-height:1.35}
 var STORAGE_KEY = 'hitokuchiPlanner.card.v5.fixed';
 var DEFAULT_PLAN_ID = 'default';
 var activePlanId = DEFAULT_PLAN_ID;
+var activeRecruitmentRoundId = null;
 
 function getRecruitmentRoundElements() {
   return document.querySelectorAll('[data-recruitment-round-id]');
@@ -585,8 +1089,53 @@ function yen(n) {
   return '¥' + n.toLocaleString('ja-JP');
 }
 
+function getRecruitmentRoundById(roundId) {
+  var rounds = getRecruitmentRounds();
+  for (var i=0; i<rounds.length; i++) {
+    if (rounds[i].id === roundId) return rounds[i];
+  }
+  return null;
+}
+
 function getCurrentRecruitmentRound() {
-  return getRecruitmentRounds()[0];
+  var rounds = getRecruitmentRounds();
+  var selected = getRecruitmentRoundById(activeRecruitmentRoundId);
+  return selected || rounds[0];
+}
+
+function activateRecruitmentRound(roundId) {
+  var rounds = getRecruitmentRounds();
+  var round = getRecruitmentRoundById(roundId) || rounds[0];
+  if (!round) return null;
+  activeRecruitmentRoundId = round.id;
+
+  var roots = getRecruitmentRoundElements();
+  for (var i=0; i<roots.length; i++) {
+    var rootId = getRecruitmentRoundId(roots[i], i);
+    var isActive = rootId === round.id;
+    roots[i].classList.toggle('hidden', !isActive);
+    roots[i].setAttribute('aria-hidden', isActive ? 'false' : 'true');
+  }
+
+  var select = document.getElementById('recruitmentRoundSelect');
+  if (select) select.value = round.id;
+  return round;
+}
+
+function renderRecruitmentRoundSelector() {
+  var select = document.getElementById('recruitmentRoundSelect');
+  if (!select) return;
+  var rounds = getRecruitmentRounds();
+  select.innerHTML = '';
+  for (var i=0; i<rounds.length; i++) {
+    var option = document.createElement('option');
+    option.value = rounds[i].id;
+    option.textContent = rounds[i].name;
+    select.appendChild(option);
+  }
+  select.onchange = function() { switchRecruitmentRound(this.value); };
+  var round = getCurrentRecruitmentRound();
+  if (round) select.value = round.id;
 }
 
 function getRecruitmentRoundCards(round) {
@@ -622,10 +1171,32 @@ function getPlanName() {
 }
 
 function getPlanData() {
+  var data = readStoredData();
+  var plans = getPlans(data);
+  var previousPlan = null;
+  for (var i=0; i<plans.length; i++) {
+    if (plans[i].id === activePlanId) {
+      previousPlan = plans[i];
+      break;
+    }
+  }
   var round = getCurrentRecruitmentRound();
   var cards = getRecruitmentRoundCards(round);
   var horses = getHorseEntries(cards);
-  var plan = {
+  var recruitmentRounds = {};
+  if (previousPlan && previousPlan.recruitmentRounds) {
+    for (var roundId in previousPlan.recruitmentRounds) {
+      if (Object.prototype.hasOwnProperty.call(previousPlan.recruitmentRounds, roundId)) {
+        recruitmentRounds[roundId] = previousPlan.recruitmentRounds[roundId];
+      }
+    }
+  }
+  recruitmentRounds[round.id] = {
+    id: round.id,
+    name: round.name,
+    horses: horses
+  };
+  return {
     id: activePlanId,
     name: getPlanName(),
     eventBudget: document.getElementById('eventBudget').value,
@@ -633,19 +1204,13 @@ function getPlanData() {
     voucherAmount: document.getElementById('voucherAmount').value,
     viewFilter: document.getElementById('viewFilter').value,
     activeRecruitmentRoundId: round.id,
-    recruitmentRounds: {}
+    recruitmentRounds: recruitmentRounds
   };
-  plan.recruitmentRounds[round.id] = {
-    id: round.id,
-    name: round.name,
-    horses: horses
-  };
-  return plan;
 }
 
 function getSaveData() {
   var existing = readStoredData();
-  var plans = existing.plans || [createPlanFromLegacyData(existing)];
+  var plans = getPlans(existing);
   var currentPlan = getPlanData();
   var replaced = false;
   for (var i=0; i<plans.length; i++) {
@@ -754,13 +1319,7 @@ function showPlanContextMenu(x, y, planId) {
 }
 
 
-function applyPlan(plan) {
-  if (plan.eventBudget != null) document.getElementById('eventBudget').value = plan.eventBudget;
-  if (plan.bulkRate != null) document.getElementById('bulkRate').value = plan.bulkRate;
-  if (plan.voucherAmount != null) document.getElementById('voucherAmount').value = plan.voucherAmount;
-  if (plan.viewFilter != null) document.getElementById('viewFilter').value = plan.viewFilter;
-
-  var round = getCurrentRecruitmentRound();
+function applyRoundState(plan, round) {
   var savedHorses = getSavedHorsesForRound(plan, round.id);
   var cards = getRecruitmentRoundCards(round);
   for (var i=0; i<cards.length; i++) {
@@ -770,6 +1329,17 @@ function applyPlan(plan) {
     unitsInput.value = savedHorses && savedHorses[no] && savedHorses[no].units != null ? savedHorses[no].units : 0;
     memoInput.value = savedHorses && savedHorses[no] && savedHorses[no].memo != null ? savedHorses[no].memo : '';
   }
+}
+
+function applyPlan(plan) {
+  if (plan.eventBudget != null) document.getElementById('eventBudget').value = plan.eventBudget;
+  if (plan.bulkRate != null) document.getElementById('bulkRate').value = plan.bulkRate;
+  if (plan.voucherAmount != null) document.getElementById('voucherAmount').value = plan.voucherAmount;
+  if (plan.viewFilter != null) document.getElementById('viewFilter').value = plan.viewFilter;
+
+  var round = activateRecruitmentRound(plan.activeRecruitmentRoundId || activeRecruitmentRoundId);
+  if (!round) return;
+  applyRoundState(plan, round);
 }
 
 function loadState() {
@@ -783,6 +1353,25 @@ function loadState() {
   activePlanId = activePlan.id;
   renderPlanTabs(plans);
   applyPlan(activePlan);
+}
+
+function switchRecruitmentRound(roundId) {
+  var nextRound = getRecruitmentRoundById(roundId);
+  if (!nextRound) return;
+  var currentRound = getCurrentRecruitmentRound();
+  if (currentRound && currentRound.id === nextRound.id) return;
+
+  saveState();
+  var data = readStoredData();
+  var plans = getPlans(data);
+  var activePlan = plans[0];
+  for (var i=0; i<plans.length; i++) {
+    if (plans[i].id === activePlanId) activePlan = plans[i];
+  }
+  activeRecruitmentRoundId = nextRound.id;
+  activateRecruitmentRound(nextRound.id);
+  applyRoundState(activePlan, nextRound);
+  applyFilter();
 }
 
 function switchPlan(planId) {
@@ -1140,6 +1729,7 @@ function wireEvents() {
   });
 }
 
+renderRecruitmentRoundSelector();
 loadState();
 setupNativeKeyboardSuppression();
 setupNumericKeypad();
